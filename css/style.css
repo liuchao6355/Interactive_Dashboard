@@ -210,7 +210,7 @@ pre {
     position: absolute;
     top: 0.42rem;
     bottom: 0;
-    width: 90%;
+    width: 99%;
     margin: auto;
     left: 0;
     right: 0;
@@ -236,13 +236,13 @@ pre {
 
 .left-top {
     width: 100%;
-    height: 20.4%;
+    height: 15%;
     position: relative;
 }
 
 .left-top>.current-num {
     width: 4.9rem;
-    height: 1.8rem;
+    height: 1rem;
     position: absolute;
     margin: auto;
     top: 0;
@@ -255,8 +255,8 @@ pre {
 
 .current-num>div {
     width: 100%;
-    height: 0.8rem;
-    line-height: 0.8rem;
+    height: 0.4rem;
+    line-height: 0.4rem;
     text-align: center;
     background: url(../images/title_bg01.png) center center no-repeat;
     font-size: 0.2rem;
@@ -266,7 +266,7 @@ pre {
 }
 
 .current-num>p {
-    font-size: 0.46rem;
+    font-size: 0.4rem;
     text-align: center;
     color: white;
 }
@@ -279,7 +279,7 @@ pre {
 
 .pie-chart>div {
     float: left;
-    width: 50%;
+    width: 100%;
     height: 100%;
     position: relative;
 }
@@ -406,9 +406,9 @@ pre {
 }
 
 .weather-box {
-    width: 4.1rem;
+    width: 6rem;
     height: 1.1rem;
-    border: 1px solid #0E94EA;
+    /* border: 1px solid #0E94EA; */
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-around;
@@ -416,9 +416,10 @@ pre {
 }
 
 .weather-box>.data {
+    margin-top: 0.2rem;
     width: 2.19rem;
     height: 0.65rem;
-    border-right: 2px solid #cdddf7;
+    /* border-right: 2px solid #cdddf7; */
 }
 
 .data>p {
@@ -486,7 +487,7 @@ pre {
 
 .select-box>ul,
 .select-pop>ul {
-    width: 1.6rem;
+    width: 3.2rem;
     height: 0.4rem;
     font-size: 0.18rem;
     overflow: hidden;
@@ -537,7 +538,7 @@ pre {
 }
 
 .center-bottom>.city-data {
-    width: 8.05rem;
+    width: 1rem;
     height: 100%;
     margin: auto;
     position: absolute;
@@ -669,7 +670,7 @@ pre {
 
 .right-top {
     width: 100%;
-    height: 41%;
+    height: 55%;
     box-sizing: border-box;
     padding-top: 0.2rem;
     position: relative;
@@ -678,6 +679,16 @@ pre {
 .right-top>.data-box,
 .right-top>.chart-box {
     top: 1rem;
+}
+
+.right-bottom{
+    width: 100%;
+    height: 55%;
+    position: relative;
+}
+.right-bottom>.data-box,
+.right-bottom>.chart-box {
+    top: 0rem;
 }
 
 .table1 {

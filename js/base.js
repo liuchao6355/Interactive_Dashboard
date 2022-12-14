@@ -1,1896 +1,1834 @@
-function fnW(str) {
-    var num;
-    str >= 10 ? num = str : num = "0" + str;
-    return num;
-}
-//获取当前时间
-var timer = setInterval(function () {
-    var date = new Date();
-    var year = date.getFullYear(); //当前年份
-    var month = date.getMonth(); //当前月份
-    var data = date.getDate(); //天
-    var hours = date.getHours(); //小时
-    var minute = date.getMinutes(); //分
-    var second = date.getSeconds(); //秒
-    var day = date.getDay(); //获取当前星期几 
-    var ampm = hours < 12 ? 'am' : 'pm';
-    $('#time').html(fnW(hours) + ":" + fnW(minute) + ":" + fnW(second));
-    $('#date').html('<span>' + year + '/' + (month + 1) + '/' + data + '</span><span>' + ampm + '</span><span>周' + day + '</span>')
+var myMenu = echarts.init(document.getElementById('menu'));
+document.getElementById("industry").innerHTML = '农业';
+//选择哪个表
+var chart='农业.csv';
+//选择哪个地区
+var area='a';
+var chart1_title = 'test1的a';
 
-}, 1000)
+window.addEventListener("load", drawMap_bar);
+var Province_Displaying = "山东省";    // global variable: province selected, revise when clicking on map
+current_Industry = chart.split('.')[0];        // global variable: industry selected, revise from the outside
+
+var mapStrokeColor = "black";           // 地图边线颜色
+var mapFillColor = "#669966";         // 地图填充颜色
+var mapMouseoverStrokeColor = "white";  // 地图鼠标悬浮时边线颜色
+var barFillColor = "steelblue";        // 柱状图填充颜色
+var barStrokeColor = "steelblue";          // 柱状图边线颜色
+var backGroundColor = "white"           // 背景颜色
 
 
 
-//页面地图数据
-var geoCoordMap = {
-    '海门': [121.15, 31.89],
-    '鄂尔多斯': [109.781327, 39.608266],
-    '招远': [120.38, 37.35],
-    '舟山': [122.207216, 29.985295],
-    '齐齐哈尔': [123.97, 47.33],
-    '盐城': [120.13, 33.38],
-    '赤峰': [118.87, 42.28],
-    '青岛': [120.33, 36.07],
-    '乳山': [121.52, 36.89],
-    '金昌': [102.188043, 38.520089],
-    '泉州': [118.58, 24.93],
-    '莱西': [120.53, 36.86],
-    '日照': [119.46, 35.42],
-    '胶南': [119.97, 35.88],
-    '南通': [121.05, 32.08],
-    '拉萨': [91.11, 29.97],
-    '云浮': [112.02, 22.93],
-    '梅州': [116.1, 24.55],
-    '文登': [122.05, 37.2],
-    '上海': [121.48, 31.22],
-    '攀枝花': [101.718637, 26.582347],
-    '威海': [122.1, 37.5],
-    '承德': [117.93, 40.97],
-    '厦门': [118.1, 24.46],
-    '汕尾': [115.375279, 22.786211],
-    '潮州': [116.63, 23.68],
-    '丹东': [124.37, 40.13],
-    '太仓': [121.1, 31.45],
-    '曲靖': [103.79, 25.51],
-    '烟台': [121.39, 37.52],
-    '福州': [119.3, 26.08],
-    '瓦房店': [121.979603, 39.627114],
-    '即墨': [120.45, 36.38],
-    '抚顺': [123.97, 41.97],
-    '玉溪': [102.52, 24.35],
-    '张家口': [114.87, 40.82],
-    '阳泉': [113.57, 37.85],
-    '莱州': [119.942327, 37.177017],
-    '湖州': [120.1, 30.86],
-    '汕头': [116.69, 23.39],
-    '昆山': [120.95, 31.39],
-    '宁波': [121.56, 29.86],
-    '湛江': [110.359377, 21.270708],
-    '揭阳': [116.35, 23.55],
-    '荣成': [122.41, 37.16],
-    '连云港': [119.16, 34.59],
-    '葫芦岛': [120.836932, 40.711052],
-    '常熟': [120.74, 31.64],
-    '东莞': [113.75, 23.04],
-    '河源': [114.68, 23.73],
-    '淮安': [119.15, 33.5],
-    '泰州': [119.9, 32.49],
-    '南宁': [108.33, 22.84],
-    '营口': [122.18, 40.65],
-    '惠州': [114.4, 23.09],
-    '江阴': [120.26, 31.91],
-    '蓬莱': [120.75, 37.8],
-    '韶关': [113.62, 24.84],
-    '嘉峪关': [98.289152, 39.77313],
-    '广州': [113.23, 23.16],
-    '延安': [109.47, 36.6],
-    '太原': [112.53, 37.87],
-    '清远': [113.01, 23.7],
-    '中山': [113.38, 22.52],
-    '昆明': [102.73, 25.04],
-    '寿光': [118.73, 36.86],
-    '盘锦': [122.070714, 41.119997],
-    '长治': [113.08, 36.18],
-    '深圳': [114.07, 22.62],
-    '珠海': [113.52, 22.3],
-    '宿迁': [118.3, 33.96],
-    '咸阳': [108.72, 34.36],
-    '铜川': [109.11, 35.09],
-    '平度': [119.97, 36.77],
-    '佛山': [113.11, 23.05],
-    '海口': [110.35, 20.02],
-    '江门': [113.06, 22.61],
-    '章丘': [117.53, 36.72],
-    '肇庆': [112.44, 23.05],
-    '大连': [121.62, 38.92],
-    '临汾': [111.5, 36.08],
-    '吴江': [120.63, 31.16],
-    '石嘴山': [106.39, 39.04],
-    '沈阳': [123.38, 41.8],
-    '苏州': [120.62, 31.32],
-    '茂名': [110.88, 21.68],
-    '嘉兴': [120.76, 30.77],
-    '长春': [125.35, 43.88],
-    '胶州': [120.03336, 36.264622],
-    '银川': [106.27, 38.47],
-    '张家港': [120.555821, 31.875428],
-    '三门峡': [111.19, 34.76],
-    '锦州': [121.15, 41.13],
-    '南昌': [115.89, 28.68],
-    '柳州': [109.4, 24.33],
-    '三亚': [109.511909, 18.252847],
-    '自贡': [104.778442, 29.33903],
-    '吉林': [126.57, 43.87],
-    '阳江': [111.95, 21.85],
-    '泸州': [105.39, 28.91],
-    '西宁': [101.74, 36.56],
-    '宜宾': [104.56, 29.77],
-    '呼和浩特': [111.65, 40.82],
-    '成都': [104.06, 30.67],
-    '大同': [113.3, 40.12],
-    '镇江': [119.44, 32.2],
-    '桂林': [110.28, 25.29],
-    '张家界': [110.479191, 29.117096],
-    '宜兴': [119.82, 31.36],
-    '北海': [109.12, 21.49],
-    '西安': [108.95, 34.27],
-    '金坛': [119.56, 31.74],
-    '东营': [118.49, 37.46],
-    '牡丹江': [129.58, 44.6],
-    '遵义': [106.9, 27.7],
-    '绍兴': [120.58, 30.01],
-    '扬州': [119.42, 32.39],
-    '常州': [119.95, 31.79],
-    '潍坊': [119.1, 36.62],
-    '重庆': [106.54, 29.59],
-    '台州': [121.420757, 28.656386],
-    '南京': [118.78, 32.04],
-    '滨州': [118.03, 37.36],
-    '贵阳': [106.71, 26.57],
-    '无锡': [120.29, 31.59],
-    '本溪': [123.73, 41.3],
-    '克拉玛依': [84.77, 45.59],
-    '渭南': [109.5, 34.52],
-    '马鞍山': [118.48, 31.56],
-    '宝鸡': [107.15, 34.38],
-    '焦作': [113.21, 35.24],
-    '句容': [119.16, 31.95],
-    '北京': [116.46, 39.92],
-    '徐州': [117.2, 34.26],
-    '衡水': [115.72, 37.72],
-    '包头': [110, 40.58],
-    '绵阳': [104.73, 31.48],
-    '乌鲁木齐': [87.68, 43.77],
-    '枣庄': [117.57, 34.86],
-    '杭州': [120.19, 30.26],
-    '淄博': [118.05, 36.78],
-    '鞍山': [122.85, 41.12],
-    '溧阳': [119.48, 31.43],
-    '库尔勒': [86.06, 41.68],
-    '安阳': [114.35, 36.1],
-    '开封': [114.35, 34.79],
-    '济南': [117, 36.65],
-    '德阳': [104.37, 31.13],
-    '温州': [120.65, 28.01],
-    '九江': [115.97, 29.71],
-    '邯郸': [114.47, 36.6],
-    '临安': [119.72, 30.23],
-    '兰州': [103.73, 36.03],
-    '沧州': [116.83, 38.33],
-    '临沂': [118.35, 35.05],
-    '南充': [106.110698, 30.837793],
-    '天津': [117.2, 39.13],
-    '富阳': [119.95, 30.07],
-    '泰安': [117.13, 36.18],
-    '诸暨': [120.23, 29.71],
-    '郑州': [113.65, 34.76],
-    '哈尔滨': [126.63, 45.75],
-    '聊城': [115.97, 36.45],
-    '芜湖': [118.38, 31.33],
-    '唐山': [118.02, 39.63],
-    '平顶山': [113.29, 33.75],
-    '邢台': [114.48, 37.05],
-    '德州': [116.29, 37.45],
-    '济宁': [116.59, 35.38],
-    '荆州': [112.239741, 30.335165],
-    '宜昌': [111.3, 30.7],
-    '义乌': [120.06, 29.32],
-    '丽水': [119.92, 28.45],
-    '洛阳': [112.44, 34.7],
-    '秦皇岛': [119.57, 39.95],
-    '株洲': [113.16, 27.83],
-    '石家庄': [114.48, 38.03],
-    '莱芜': [117.67, 36.19],
-    '常德': [111.69, 29.05],
-    '保定': [115.48, 38.85],
-    '湘潭': [112.91, 27.87],
-    '金华': [119.64, 29.12],
-    '岳阳': [113.09, 29.37],
-    '长沙': [113, 28.21],
-    '衢州': [118.88, 28.97],
-    '廊坊': [116.7, 39.53],
-    '菏泽': [115.480656, 35.23375],
-    '合肥': [117.27, 31.86],
-    '武汉': [114.31, 30.52],
-    '大庆': [125.03, 46.58],
-    '安徽省': [117.17, 31.52],
-    '北京市': [116.24, 39.55],
-    '重庆市': [106.54, 29.59],
-    '福建省': [119.18, 26.05],
-    '甘肃省': [103.51, 36.04],
-    '广东省': [113.14, 23.08],
-    '广西壮族自治区': [108.19, 22.48],
-    '贵州省': [106.42, 26.35],
-    '海南省': [110.20, 20.02],
-    '河北省': [114.30, 38.02],
-    '河南省': [113.40, 34.46],
-    '黑龙江省': [128.36, 45.44],
-    '湖北省': [112.27, 30.15],
-    '湖南省': [112.59, 28.12],
-    '吉林省': [125.19, 43.54],
-    '江苏省': [118.46, 32.03],
-    '江西省': [115.55, 28.40],
-    '辽宁省': [123.25, 41.48],
-    '内蒙古': [108.41, 40.48],
-    '内蒙古自治区': [108.41, 40.48],
-    '宁夏回族自治区': [106.16, 38.27],
-    '青海省': [101.48, 36.38],
-    '山东省': [118.00, 36.40],
-    '山西省': [112.33, 37.54],
-    '陕西省': [108.57, 34.17],
-    '上海市': [121.29, 31.14],
-    '海南': [108.77, 19.10],
-    '四川省': [104.04, 30.40],
-    '天津市': [117.12, 39.02],
-    '西藏自治区': [91.08, 29.39],
-    '新疆维吾尔自治区': [87.36, 43.45],
-    '云南省': [102.42, 25.04],
-    '浙江省': [120.10, 30.16],
-    '澳门特别行政区': [115.07, 21.33],
-    '台湾省': [121.21, 23.53],
-    '香港特别行政区': [114.1, 22.2]
-};
+// 基于准备好的dom，初始化echarts实例
+var myChart1 = echarts.init(document.getElementById('echart01'));
+var myChart2 = echarts.init(document.getElementById('echart02'));
+var myChart3 = echarts.init(document.getElementById('echart03'));
 
-$('.select').on('blur', function () {
-        $(this).find('.select-ul').hide();
-    })
-    //下拉框点击出现下拉框内容
-$('.select-div').on('click', function () {
-    if ($(this).siblings('.select-ul').is(":hidden")) {
-        $(this).siblings('.select-ul').show();
-    } else {
-        $(this).siblings('.select-ul').hide();
-    }
-})
+document.getElementById("chart222").innerHTML = '各产业占比';
 
+var dataName='data/'+chart;
 
-$('.select-ul').on('click', 'li', function () {
-    $(this).addClass('active').siblings('li').removeClass('active').parent().hide().siblings('.select-div').html($(this).html());
-    var parentDiv = $(this).parent().parent().parent();
-})
-
-//鼠标滑动到按钮，按钮内容变成白色
-var imgName;
-$('.title-box').children('button').hover(function () {
-    imgName = $(this).children('img').attr('src').split('.png')[0];
-    $(this).children('img').attr('src', imgName + '_on.png');
-}, function () {
-    $(this).children('img').attr('src', imgName + '.png');
-
-});
-
-
-var startColor = ['#0e94eb', '#c440ef', '#efb013', '#2fda07', '#d8ef13', '#2e4af8', '#0eebc4', '#f129b1', '#17defc', '#f86363'];
-var borderStartColor = ['#0077c5', '#a819d7', '#c99002', '#24bc00', '#b6cb04', '#112ee2', '#00bd9c', '#ce078f', '#00b2cd', '#ec3c3c'];
-
-
-
-//入库量占比，带边框效果的饼图
-function chart1() {
-    var data = [{
-        name: '顺丰',
-        value: 192581,
-        percent: '30.8721',
-    }, {
-        name: '京东',
-        value: 215635,
-        percent: '34.076',
-    }, {
-        name: 'EMS',
-        value: 224585,
-        percent: '35.49',
-    }];
-    var myChart = echarts.init(document.getElementById('pie'));
-    var myChart1 = echarts.init(document.getElementById('pie1'));
-    window.addEventListener('resize', function () {
-        myChart.resize();
-        myChart1.resize();
-    });
-
-    var str = '';
-    for (var i = 0; i < data.length; i++) {
-        str += '<p><span><i class="legend" style="background:' + startColor[i] + '"></i></span>' + data[i].name + '<span class="pie-number" style="color:' + startColor[i] + '">' + data[i].value + '</span>' + Number(data[i].percent).toFixed(2) + '%</p>';
-    }
-
-    $('.pie-data').append(str);
-
-
-    function deepCopy(obj) {
-        if (typeof obj !== 'object') {
-            return obj;
-        }
-        var newobj = {};
-        for (var attr in obj) {
-            newobj[attr] = obj[attr];
-        }
-        return newobj;
-    }
-    var xData = [],
-        yData = [];
-    data.map((a, b) => {
-        xData.push(a.name);
-        yData.push(a.value);
-    });
-
-
-    var RealData = [];
-    var borderData = [];
-    data.map((item, index) => {
-        var newobj = deepCopy(item);
-        var newobj1 = deepCopy(item);
-        RealData.push(newobj);
-        borderData.push(newobj1);
-    });
-    RealData.map((item, index) => {
-        item.itemStyle = {
-            normal: {
-                color: {
-                    type: 'linear',
-                    x: 0,
-                    y: 0,
-                    x2: 0,
-                    y2: 1,
-                    colorStops: [{
-                        offset: 0,
-                        color: startColor[index] // 0% 处的颜色
-                }, {
-                        offset: 1,
-                        color: startColor[index] // 100% 处的颜色
-                }],
-                    globalCoord: false // 缺省为 false
-                },
-            }
-        }
-    });
-    borderData.map((item, index) => {
-        item.itemStyle = {
-            normal: {
-                color: {
-                    type: 'linear',
-                    x: 0,
-                    y: 0,
-                    x2: 0,
-                    y2: 1,
-                    colorStops: [{
-                        offset: 0,
-                        color: borderStartColor[index] // 0% 处的颜色
-                }, {
-                        offset: 1,
-                        color: borderStartColor[index] // 100% 处的颜色
-                }],
-                    globalCoord: false // 缺省为 false
-                },
-            }
-        }
-    });
-    var option = {
-        tooltip: {
-            trigger: 'item',
-            //            position: ['30%', '50%'],
-            confine: true,
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
+// 导航栏
+const MenuOption = {
+    backgroundColor: 'rgba(0,0,0,0)',  		// 图表背景色
+    title: {
+        left: 0,
+        top: 'middle',
+        textStyle: {
+            color: "#e6e6e6",
+            fontSize: 25
         },
-        series: [
-        // 主要展示层的
-            {
-                radius: ['50%', '85%'],
-                center: ['50%', '50%'],
-                type: 'pie',
-                label: {
-                    normal: {
-                        show: false
-                    },
-                    emphasis: {
-                        show: false
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    },
-                    emphasis: {
-                        show: false
-                    }
-                },
-                name: "派件入库量占比内容",
-                data: RealData
-        },
-        // 边框的设置
-            {
-                radius: ['45%', '50%'],
-                center: ['50%', '50%'],
-                type: 'pie',
-                label: {
-                    normal: {
-                        show: false
-                    },
-                    emphasis: {
-                        show: false
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    },
-                    emphasis: {
-                        show: false
-                    }
-                },
-                animation: false,
-                tooltip: {
-                    show: false
-                },
-                data: borderData
-        }
-    ]
-    };
+        text: '产业',
 
-    myChart.setOption(option);
-    myChart1.setOption(option);
-}
-
-chart1()
-
-//----------------------派件入库量占比内容end---------------
-
-//------------广东省寄派件数据内容---------------
-//点击筛选按钮
-$('#filBtn').on('click', function () {
-        if ($('#filCon').is(":hidden")) {
-            $('#filCon').attr('style', 'display:flex');
-        } else {
-            $('#filCon').hide();
-        }
-    })
-    //点击筛选按钮end
-
-
-function chart2(chartType) {
-    var data = [
-        {
-            name: '广州市',
-            value: 120057.34
-            },
-        {
-            name: '韶关市',
-            value: 15477.48
-            },
-        {
-            name: '深圳市',
-            value: 131686.1
-            },
-        {
-            name: '珠海市',
-            value: 6992.6
-            },
-        {
-            name: '汕头市',
-            value: 44045.49
-            },
-        {
-            name: '佛山市',
-            value: 40689.64
-            },
-        {
-            name: '江门市',
-            value: 37659.78
-            },
-        {
-            name: '湛江市',
-            value: 45180.97
-            },
-        {
-            name: '茂名市',
-            value: 5204.26
-            },
-        {
-            name: '肇庆市',
-            value: 21900.9
-            },
-        {
-            name: '惠州市',
-            value: 4918.26
-            },
-        {
-            name: '梅州市',
-            value: 5881.84
-            },
-        {
-            name: '汕尾市',
-            value: 4178.01
-            },
-        {
-            name: '河源市',
-            value: 2227.92
-            },
-        {
-            name: '阳江市',
-            value: 2180.98
-            },
-        {
-            name: '清远市',
-            value: 9172.94
-            },
-        {
-            name: '东莞市',
-            value: 3368
-            },
-        {
-            name: '中山市',
-            value: 306.98
-            },
-        {
-            name: '潮州市',
-            value: 810.66
-            },
-        {
-            name: '揭阳市',
-            value: 542.2
-            },
-        {
-            name: '云浮市',
-            value: 256.38
-            }]
-
-    var myChart = echarts.init(document.getElementById('gdMap'));
-    var myCharts = echarts.init(document.getElementById('gdMaps'));
-    window.addEventListener('resize', function () {
-        myChart.resize();
-        myCharts.resize();
-    });
-    var yMax = 0;
-    for (var j = 0; j < data.length; j++) {
-        if (yMax < data[j].value) {
-            yMax = data[j].value;
-        }
-    }
-        myChart.hideLoading();
-        myCharts.hideLoading();
-        var option = {
-            animation: true,
-            tooltip: {
-                show: true
-            },
-            visualMap: {
-                min: 0,
-                max: yMax,
-                text: ['高', '低'],
-                orient: 'horizontal',
-                itemWidth: 15,
-                itemHeight: 200,
-                right: 0,
-                bottom: 30,
-                inRange: {
-                    color: ['#75ddff', '#0e94eb']
-                },
-                textStyle: {
-                    color: 'white'
+    },
+    toolbox: {
+        itemSize: 30,
+        itemGap: 40,
+        left: '30%',
+        top: 'middle',
+        feature: {
+            myFatbutton: {
+                show: true,
+                title: '农业',
+                icon: 'image://svg/农业.svg',
+                onclick: function () {
+                    chart = "农业.csv";
+                    document.getElementById("chart111").innerHTML = '平行坐标系-农业';
+                    document.getElementById("industry").innerHTML = '农业';
+                    document.getElementById("chart333").innerHTML = '农业产业指数';
+                    document.getElementById("chart444").innerHTML = Province_Displaying + current_Industry + "产值明细"
+                    dataName='data/'+chart;
+                    chart1(dataName);
+                    chart2(dataName);
+                    window.addEventListener("load", drawMap_bar);
+                    current_Industry = chart.split('.')[0]; 
+                    // map();
+                    chart31();
                 }
             },
-            series: [
-                {
-                    name: '数据名称',
-                    type: 'map',
-                    mapType: '广东',
-                    selectedMode: 'multiple',
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: '{b}<br/>{c} (件)'
-                    },
-                    itemStyle: {
-                        normal: {
-                            borderWidth: 1,
-                            borderColor: '#0e94eb',
-                            label: {
-                                show: false
-                            }
-                        },
-                        emphasis: { // 也是选中样式
-                            borderWidth: 1,
-                            borderColor: '#fff',
-                            backgroundColor: 'red',
-                            label: {
-                                show: true,
-                                textStyle: {
-                                    color: '#fff'
-                                }
-                            }
-                        }
-                    },
-                    data: data,
+            myFoodbutton: {
+                show: true,
+                title: '工业',
+                icon: 'image://svg/工业.svg',
+                onclick: function () {
+                    chart = "工业.csv";
+                    document.getElementById("chart111").innerHTML = '平行坐标系-工业';
+                    document.getElementById("industry").innerHTML = '工业';
+                    document.getElementById("chart333").innerHTML = '工业产业指数';
+                    document.getElementById("chart444").innerHTML = Province_Displaying + current_Industry + "产值明细"
+                    dataName='data/'+chart;
+                    chart1(dataName);
+                    chart2(dataName);
+                    window.addEventListener("load", drawMap_bar);
+                    current_Industry = chart.split('.')[0]; 
+                    // map();
+                    chart32();
+                }
+            },
+            myKalulibutton: {
+                show: true,
+                title: '建筑业',
+                icon: 'image://svg/建筑业.svg',
+                onclick: function () {
+                    chart = "建筑业.csv";
+                    document.getElementById("chart111").innerHTML = '平行坐标系-建筑业';
+                    document.getElementById("industry").innerHTML = '建筑业';
+                    document.getElementById("chart333").innerHTML = '建筑业产业指数';
+                    document.getElementById("chart444").innerHTML = Province_Displaying + current_Industry + "产值明细" 
+                    dataName='data/'+chart;
+                    chart1(dataName);
+                    chart2(dataName);
+                    window.addEventListener("load", drawMap_bar);
+                    current_Industry = chart.split('.')[0]; 
+                    // map();
+                    chart33();
+                }
+            },
+            myProteinbutton: {
+                show: true,
+                title: '第三产业',
+                icon: 'image://svg/第三产业.svg',
+                onclick: function () {
+                    chart = "第三产业.csv";
+                    document.getElementById("chart111").innerHTML = '平行坐标系-第三产业';
+                    document.getElementById("industry").innerHTML = '第三产业';
+                    document.getElementById("chart333").innerHTML = '第三产业产业指数';
+                    document.getElementById("chart444").innerHTML = Province_Displaying + current_Industry + "产值明细"
+                    dataName='data/'+chart;
+                    chart1(dataName);
+                    chart2();
+                    window.addEventListener("load", drawMap_bar);
+                    current_Industry = chart.split('.')[0]; 
+                    // map();
+                    chart34();
+                }
             }
-            ]
+        }
+    }
+};
+
+myMenu.setOption(MenuOption);
+document.getElementById("chart111").innerHTML = '平行坐标系-农业';
+
+// 绘制平行坐标系
+function chart1(dataName)
+{
+    
+    console.log(dataName)
+    newData = [];
+    valuerData=[];
+    namerData=[]
+    tmp=[];
+    d3.csv(dataName, function (error, dataSet)
+    {
+
+        var px_option1 = {
+            parallelAxis: [{
+                dim: 0,
+                name: '焦炭产量(万吨)'
+            },
+            {
+                dim: 1,
+                name: '酸碱产量(万吨)'
+            },
+            {
+                dim: 2,
+                name: '水泥产量(万吨)',
+                
+
+            },
+            {
+                dim: 3,
+                name: '钢材产量(万吨)',
+
+            },
+            {
+                dim: 4,
+                name: '发电量(亿千瓦小时)',
+                
+            },
+            {
+                dim: 5,
+                name: '化学纤维产量(万吨)',
+                
+            }
+            
+        
+        ], 
+        parallel: {                         // 这是『坐标系』的定义
+            left: '10%',                     // 平行坐标系的位置设置
+            right: '13%',
+            bottom: '10%',
+            top: '20%',
+            parallelAxisDefault: {          // 『坐标轴』的公有属性可以配置在这里避免重复书写
+                type: 'value',
+                nameLocation: 'end',
+                nameGap: 20,
+                axisLine :{                   
+                    lineStyle:{
+                        color:'#fff'
+                    }
+                }
+            }
+        },
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 1
+                },
+                data: [
+                [,0,258.07,203.36,472.57,0.34],
+                [153.64,90.35,632.03,5991.73,799.73,8.56],
+                [4056.99,323.14,11354.63,29559.38,3513.42,90.04],
+                [9857.24,99.48,5688.62,6173.88,3926.16,1.04],
+                [4657.93,893.56,3667.92,2957.55,6119.93,0.67],
+                [2293.81,235.87,4938.91,7759.09,2257.58,23.39],
+                [399.12,78.47,2125.29,1790.6,1025.75,44.77],
+                [1234.92,82.01,2181.59,951.38,1200.53,2.25],
+                [540.86,82.26,443.99,1941.43,1003.06,32.47],
+                [1438.35,620.94,15402.11,15701.9,5968.89,1625.34],
+                [216.47,543.73,13637.96,3451.83,4222.5,3209.61],
+                [1252.62,773,15001,3820.33,3083.39,59.97],
+                [224.62,370.1,10131.01,3980.53,2950.8,1029.66],
+                [694.45,493.13,10403.74,3480.92,1563.27,107.66],
+                [3186.78,1635.13,16580.41,10667.62,6210.32,77.12],
+                [1514.93,695.87,11402.2,4335.97,3039.08,79.19],
+                [882.43,1228.18,11861.88,3852.07,3292.37,39],
+                [660.93,251.35,10466.58,2979.7,1741.86,4.65],
+                [619.81,286.13,17084.27,5111.18,6306.23,84.71],
+                [1071.81,519.4,11432.02,5282.09,2081.93,0.53],
+                [212.55,28.8,1937.52,36.29,391.23,4.8],
+                [286.36,102.94,6238.18,1310.46,991.43,20.83],
+                [1058.58,636.39,14171.41,3496.25,4530.33,77.37],
+                [417.91,508.88,9332.85,811.16,2368.4,1.3],
+                [1282.44,1618.26,11511.51,2646.44,3770.23,4.21],
+                [0,0,991.59,3.5,112.77,0],
+                [4320.78,236.6,6698.52,2097.41,2739.75,3.83],
+                [499.85,306.88,4478.2,1080.59,1896.82,0.14],
+                [157.71,46.8,1107.09,181.99,995.71,0.31],
+                [964.73,144.56,1870.05,582.29,2082.89,2.47],
+                [2499.71,383.39,4693.35,1467.68,4683.55,77.54]
+                ]
+            }
         };
 
-        myChart.setOption(option);
-        myCharts.setOption(option);
-}
-chart2('');
+        var px_option2 = {
+            parallelAxis: [{
+                dim: 0,
+                name: '茶叶产量（万吨）'
+            },
+            {
+                dim: 1,
+                name: '水果产量(万吨)'
+            },
+            {
+                dim: 2,
+                name: '肉类产量(万吨)',
+                
 
-//------------广东省寄派件数据内容end---------------
+            },
+            {
+                dim: 3,
+                name: '蛋奶产量(万吨),',
 
-//cityName全国的省级行政区域数据
-var cityName = [{
-    "ProID": 1,
-    "name": "北京",
-    "ProSort": 1,
-    "firstP": "B",
-    "ProRemark": "直辖市"
-}, {
-    "ProID": 2,
-    "name": "天津",
-    "ProSort": 2,
-    "firstP": "T",
-    "ProRemark": "直辖市"
-}, {
-    "ProID": 3,
-    "name": "河北",
-    "ProSort": 5,
-    "firstP": "H",
-    "ProRemark": "省份"
-}, {
-    "ProID": 4,
-    "name": "山西",
-    "ProSort": 6,
-    "firstP": "S",
-    "ProRemark": "省份"
-}, {
-    "ProID": 5,
-    "name": "内蒙古",
-    "ProSort": 32,
-    "firstP": "N",
-    "ProRemark": "自治区"
-}, {
-    "ProID": 6,
-    "name": "辽宁",
-    "ProSort": 8,
-    "firstP": "L",
-    "ProRemark": "省份"
-}, {
-    "ProID": 7,
-    "name": "吉林",
-    "ProSort": 9,
-    "firstP": "J",
-    "ProRemark": "省份"
-}, {
-    "ProID": 8,
-    "name": "黑龙江",
-    "ProSort": 10,
-    "firstP": "H",
-    "ProRemark": "省份"
-}, {
-    "ProID": 9,
-    "name": "上海",
-    "ProSort": 3,
-    "firstP": "S",
-    "ProRemark": "直辖市"
-}, {
-    "ProID": 10,
-    "name": "江苏",
-    "ProSort": 11,
-    "firstP": "J",
-    "ProRemark": "省份"
-}, {
-    "ProID": 11,
-    "name": "浙江",
-    "ProSort": 12,
-    "firstP": "Z",
-    "ProRemark": "省份"
-}, {
-    "ProID": 12,
-    "name": "安徽",
-    "ProSort": 13,
-    "firstP": "A",
-    "ProRemark": "省份"
-}, {
-    "ProID": 13,
-    "name": "福建",
-    "ProSort": 14,
-    "firstP": "F",
-    "ProRemark": "省份"
-}, {
-    "ProID": 14,
-    "name": "江西",
-    "ProSort": 15,
-    "firstP": "J",
-    "ProRemark": "省份"
-}, {
-    "ProID": 15,
-    "name": "山东",
-    "ProSort": 16,
-    "firstP": "S",
-    "ProRemark": "省份"
-}, {
-    "ProID": 16,
-    "name": "河南",
-    "ProSort": 17,
-    "firstP": "H",
-    "ProRemark": "省份"
-}, {
-    "ProID": 17,
-    "name": "湖北",
-    "ProSort": 18,
-    "firstP": "H",
-    "ProRemark": "省份"
-}, {
-    "ProID": 18,
-    "name": "湖南",
-    "ProSort": 19,
-    "firstP": "H",
-    "ProRemark": "省份"
-}, {
-    "ProID": 19,
-    "name": "广东",
-    "ProSort": 20,
-    "firstP": "G",
-    "ProRemark": "省份"
-}, {
-    "ProID": 20,
-    "name": "海南",
-    "ProSort": 24,
-    "firstP": "H",
-    "ProRemark": "省份"
-}, {
-    "ProID": 21,
-    "name": "广西",
-    "ProSort": 28,
-    "firstP": "G",
-    "ProRemark": "自治区"
-}, {
-    "ProID": 22,
-    "name": "甘肃",
-    "ProSort": 21,
-    "firstP": "G",
-    "ProRemark": "省份"
-}, {
-    "ProID": 23,
-    "name": "陕西省",
-    "ProSort": 27,
-    "firstP": "S",
-    "ProRemark": "省份"
-}, {
-    "ProID": 24,
-    "name": "新疆维吾尔",
-    "ProSort": 31,
-    "firstP": "X",
-    "ProRemark": "自治区"
-}, {
-    "ProID": 25,
-    "name": "青海",
-    "ProSort": 26,
-    "firstP": "Q",
-    "ProRemark": "省份"
-}, {
-    "ProID": 26,
-    "name": "宁夏",
-    "ProSort": 30,
-    "firstP": "N",
-    "ProRemark": "自治区"
-}, {
-    "ProID": 27,
-    "name": "重庆",
-    "ProSort": 4,
-    "firstP": "C",
-    "ProRemark": "直辖市"
-}, {
-    "ProID": 28,
-    "name": "四川省",
-    "ProSort": 22,
-    "firstP": "S",
-    "ProRemark": "省份"
-}, {
-    "ProID": 29,
-    "name": "贵州省",
-    "ProSort": 23,
-    "firstP": "G",
-    "ProRemark": "省份"
-}, {
-    "ProID": 30,
-    "name": "云南省",
-    "ProSort": 25,
-    "firstP": "Y",
-    "ProRemark": "省份"
-}, {
-    "ProID": 31,
-    "name": "西藏",
-    "ProSort": 29,
-    "firstP": "X",
-    "ProRemark": "自治区"
-}, {
-    "ProID": 32,
-    "name": "台湾",
-    "ProSort": 7,
-    "firstP": "T",
-    "ProRemark": "省份"
-}, {
-    "ProID": 33,
-    "name": "澳门",
-    "ProSort": 33,
-    "firstP": "A",
-    "ProRemark": "特别行政区"
-}, {
-    "ProID": 34,
-    "name": "香港",
-    "ProSort": 34,
-    "firstP": "X",
-    "ProRemark": "特别行政区"
-}]
-
-addCityBtn(cityName);
-
-function addCityBtn(data) {
-    var li_con = '';
-    for (var i = 0; i < data.length; i++) {
-        li_con += '<li>' + data[i].name + '</li>'
-    }
-    $('#city').html(li_con);
-    $('#citys').html(li_con);
-}
-
-$('.city-btn').on('click', 'li', function () {
-    var str;
-    var patt = [/[a-z]/i, /[a-e]/i, /[f-i]/i, /[k-o]/i, /[p-t]/i, /[u-z]/i];
-    var index = $(this).index();
-    var li_con = '';
-    for (var i = 0; i < cityName.length; i++) {
-        str = cityName[i].firstP;
-        if (patt[index].test(str)) {
-            li_con += '<li>' + cityName[i].name + '</li>'
-        }
-    }
-
-    $(this).addClass('active').siblings('li').removeClass('active');
-    if (index == 0) {
-        $('#city').children().removeClass('active');
-        if ($(this).parent().data('city') == 1) {
-            $('.ranking-box').show();
-            if ($("#barType").find('.active').data('value') == 1) {
-                $('#titleQ').html('<span>全网</span>到珠海');
-            } else if ($("#barType").find('.active').data('value') == 2) {
-                $('#titleQ').html('珠海到<span>全网</span>')
+            },
+            {
+                dim: 4,
+                name: '水产品总产量(万吨)',
+                
+            },
+            {
+                dim: 5,
+                name: '粮食产量(万吨)',
+                
             }
-            $('#city').html(li_con);
-        } else if ($(this).parent().data('city') == 2) {
-            if ($('.cont-div').eq(0).css('visibility') != 'hidden') {
-                $('.ranking-box').show();
-            }
-            if ($("#barTypes").find('.active').data('value') == 1) {
-                $('#titleQs').html('<span>全网</span>到珠海');
-            } else if ($("#barTypes").find('.active').data('value') == 2) {
-                $('#titleQs').html('珠海到<span>全网</span>')
-            }
-            $('#citys').html(li_con);
-        }
-    } else {
-        if ($(this).parent().data('city') == 1) {
-            $('#city').html(li_con);
-        } else if ($(this).parent().data('city') == 2) {
-            $('#citys').html(li_con);
-        }
-    }
-
-
-})
-
-
-$('#city').on('click', 'li', function () {
-    $(this).addClass('active').siblings('li').removeClass('active');
-    $('.center-bottom .ranking-box').hide();
-    if ($("#barType").find('.active').data('value') == 1) {
-        $('#titleQ').html('<span>' + $(this).html() + '</span>到珠海');
-    } else if ($("#barType").find('.active').data('value') == 2) {
-        $('#titleQ').html('珠海到<span>' + $(this).html() + '</span>')
-    }
-})
-
-$('#citys').on('click', 'li', function () {
-    $(this).addClass('active').siblings('li').removeClass('active');
-    $('.pop-data .ranking-box').hide();
-    if ($("#barTypes").find('.active').data('value') == 1) {
-        $('#titleQs').html('<span>' + $(this).html() + '</span>到珠海');
-    } else if ($("#barTypes").find('.active').data('value') == 2) {
-        $('#titleQs').html('珠海到<span>' + $(this).html() + '</span>')
-    }
-})
-
-//寄派件选择
-$("#barType").on('click', 'li', function () {
-    $(this).addClass('active').siblings('li').removeClass('active');
-    $('#barTitle').html($(this).html() + '数据');
-    $('#tabBtn').data('state', $(this).data('value'));
-    if ($(this).data('value') == 1) {
-        $('.table1').eq(0).show().siblings('table').hide();
-    } else if ($(this).data('value') == 2) {
-        $('.table1').eq(1).show().siblings('table').hide();
-    }
-    chart3($(this).data('value'), 0);
-    chart4(chart4Data, $(this).data('value'), 0);
-})
-
-//寄派件选择
-$("#barTypes").on('click', 'li', function () {
-    $(this).addClass('active').siblings('li').removeClass('active');
-    $('#barTitles').html($(this).html() + '数据');
-    $('#tabBtns').data('state', $(this).data('value'));
-    if ($(this).data('value') == 1) {
-        $('.table2').eq(0).show().siblings('table').hide();
-    } else if ($(this).data('value') == 2) {
-        $('.table2').eq(1).show().siblings('table').hide();
-    }
-    chart3($(this).data('value'), 1);
-    chart4(chart4Data, $(this).data('value'), 1);
-
-})
-
-
-function chart3(type, chartType) {
-    var myChart = echarts.init(document.getElementById('chart3'));
-    var myCharts = echarts.init(document.getElementById('chart3s'));
-    window.addEventListener('resize', function () {
-        myChart.resize();
-        myCharts.resize();
-    });
-
-    //    设置背景阴影的参数，获取数据的最大值
-
-    var data; //横坐标数据，不动
-    var data_; //模拟数据
-    if (type == 1) {
-        data_ = [{
-                name: "入库件",
-                value: 584
-            },
-            {
-                name: "滞留件",
-                value: 152
-            }, {
-                name: "丢失件",
-                value: 100
-            },
-            {
-                name: "正常件",
-                value: 689
-            },
-            {
-                name: "派送件",
-                value: 200
-            }, {
-                name: "自提件",
-                value: 121
-            }, {
-                name: "退签件",
-                value: 92
-            }]
-    } else if (type == 2) {
-        data_ = [{
-                name: "入库件",
-                value: 568
-                }, {
-                name: "丢失件",
-                value: 287
-                }, {
-                name: "滞留件",
-                value: 120
-                },
-            {
-                name: "撤销件",
-                value: 152
-                },
-            {
-                name: "出库件",
-                value: 125
-                }, {
-                name: "正常件",
-                value: 122
-        }]
-    }
-    var series_data; //绘制图表的数据
-    //绘制图表
-    var yMax = 0;
-    for (var j = 0; j < data_.length; j++) {
-        if (yMax < data_[j].value) {
-            yMax = data_[j].value;
-        }
-    }
-    var dataShadow = [];
-    for (var i = 0; i < 10; i++) {
-        dataShadow.push(yMax * 2);
-    }
-
-    if (type == 1) {
-        data = ['入库件', '在库件', '出库件', '退签件', '丢失件'];
-
-        if (chartType == '') {
-            $(' .dph-data1').html(data_[0].value);
-            $(' .dph-data2').html(data_[1].value + data_[3].value);
-            $(' .dph-data3').html(data_[3].value);
-            $(' .dph-data4').html(data_[2].value);
-            $(' .dph-data5').html(data_[1].value);
-            $(' .dph-data6').html(data_[4].value + data_[5].value);
-            $(' .dph-data7').html(data_[4].value);
-            $(' .dph-data8').html(data_[5].value);
-            $(' .dph-data9').html(data_[6].value);
-        } else if (chartType == 0) {
-            $('.table1 .dph-data1').html(data_[0].value);
-            $('.table1 .dph-data2').html(data_[1].value + data_[3].value);
-            $('.table1 .dph-data3').html(data_[3].value);
-            $('.table1 .dph-data4').html(data_[2].value);
-            $('.table1 .dph-data5').html(data_[1].value);
-            $('.table1 .dph-data6').html(data_[4].value + data_[5].value);
-            $('.table1 .dph-data7').html(data_[4].value);
-            $('.table1 .dph-data8').html(data_[5].value);
-            $('.table1 .dph-data9').html(data_[6].value);
-        } else if (chartType == 1) {
-            $('.table2 .dph-data1').html(data_[0].value);
-            $('.table2 .dph-data2').html(data_[1].value + data_[3].value);
-            $('.table2 .dph-data3').html(data_[3].value);
-            $('.table2 .dph-data4').html(data_[2].value);
-            $('.table2 .dph-data5').html(data_[1].value);
-            $('.table2 .dph-data6').html(data_[4].value + data_[5].value);
-            $('.table2 .dph-data7').html(data_[4].value);
-            $('.table2 .dph-data8').html(data_[5].value);
-            $('.table2 .dph-data9').html(data_[6].value);
-        }
-
-        series_data = [
-            { // For shadow
-                type: 'bar',
-                barWidth: 20,
-                xAxisIndex: 2,
-                tooltip: {
-                    show: false
-                },
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(14, 148, 235, 0.102)'
-                    }
-                },
-                data: dataShadow,
-                animation: false
-            },
-            {
-                name: '入库件',
-                type: 'bar',
-                barGap: '-100%',
-                barWidth: '40%',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: '#0e94eb'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [data_[0], 0, 0, 0, 0],
-            },
-            {
-                name: '滞留件',
-                type: 'bar',
-                stack: '在库件',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(239,176,19,.9)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, data_[1], 0, 0, 0],
-            },
-            {
-                name: '丢失件',
-                type: 'bar',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(239,176,19,0.4)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, 0, 0, 0, data_[2]],
-            },
-            {
-                name: '正常件',
-                type: 'bar',
-                stack: '在库件',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(239,176,19,0.3)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, data_[3], 0, 0, 0],
-            },
-            {
-                name: '派送件',
-                type: 'bar',
-                stack: '出库件',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(196,64,239,0.8)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, 0, data_[4], 0, 0],
-            },
-            {
-                name: '自提件',
-                type: 'bar',
-                stack: '出库件',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(196,64,239,0.4)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, 0, data_[5], 0, 0],
-            },
-            {
-                name: '退签件',
-                type: 'bar',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(219,44,44,0.8)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, 0, 0, data_[6], 0],
-            }
-        ]
-
-
-    } else if (type == 2) {
-        data = ['入库件', '在库件', '出库件', '丢失件', '撤销件'];
-        if (chartType == '') {
-            $('.mail-data1').html(data_[0].value);
-            $('.mail-data2').html(data_[2].value + data_[5].value);
-            $('.mail-data3').html(data_[1].value);
-            $('.mail-data4').html(data_[2].value);
-            $('.mail-data5').html(data_[3].value);
-            $('.mail-data6').html(data_[4].value);
-            $('.mail-data7').html(data_[5].value);
-        } else if (chartType == 0) {
-            $('.table1 .mail-data1').html(data_[0].value);
-            $('.table1 .mail-data2').html(data_[2].value + data_[5].value);
-            $('.table1 .mail-data3').html(data_[1].value);
-            $('.table1 .mail-data4').html(data_[2].value);
-            $('.table1 .mail-data5').html(data_[3].value);
-            $('.table1 .mail-data6').html(data_[4].value);
-            $('.table1 .mail-data7').html(data_[5].value);
-        } else if (chartType == 1) {
-            $('.table2 .mail-data1').html(data_[0].value);
-            $('.table2 .mail-data2').html(data_[2].value + data_[5].value);
-            $('.table2 .mail-data3').html(data_[1].value);
-            $('.table2 .mail-data4').html(data_[2].value);
-            $('.table2 .mail-data5').html(data_[3].value);
-            $('.table2 .mail-data6').html(data_[4].value);
-            $('.table2 .mail-data7').html(data_[5].value);
-        }
-
-        series_data = [
-            { // For shadow
-                type: 'bar',
-                barWidth: 20,
-                xAxisIndex: 2,
-                tooltip: {
-                    show: false
-                },
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(14, 148, 235, 0.102)'
-                    }
-                },
-                data: dataShadow,
-                animation: false
-            },
-            {
-                name: '入库件',
-                barGap: '-100%',
-                barWidth: '40%',
-                type: 'bar',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: '#0e94eb'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [data_[0], 0, 0, 0, 0],
-            },
-            {
-                name: '正常件',
-                type: 'bar',
-                stack: '在库件',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(239,176,19,.9)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, data_[5], 0, 0, 0, 0],
-                },
-            {
-                name: '丢失件',
-                type: 'bar',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(239,176,19,.9)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, 0, 0, data_[1], 0],
-                    },
-            {
-                name: '滞留件',
-                type: 'bar',
-                xAxisIndex: 1,
-                stack: '在库件',
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(239,176,19,0.4)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-
-                data: [0, data_[2], 0, 0, 0],
-                    },
-            {
-                name: '撤销件',
-                type: 'bar',
-                xAxisIndex: 1,
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(239,176,19,0.3)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, 0, 0, 0, data_[3]],
-                    },
-            {
-                name: '出库件',
-                type: 'bar',
-                xAxisIndex: 1,
-                stack: '退签件',
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(196,64,239,0.8)'
-                    },
-                    emphasis: {
-                        opacity: 1
-                    }
-                },
-                data: [0, 0, data_[4], 0, 0],
-                    }
-
-                    ]
-    }
-
-    var option = {
-        title: '',
-        grid: {
-            top: '10%',
-            containLabel: true
-        },
-        tooltip: {
-            show: true
-        },
-        xAxis: [{
-                type: 'category',
-                show: false,
-                data: data,
-                axisLabel: {
-                    textStyle: {
-                        color: '#fff'
-                    }
-                }
-            },
-            {
-                type: 'category',
-                position: "bottom",
-                data: data,
-                boundaryGap: true,
-                // offset: 40,
-                axisTick: {
-                    show: false
-                },
-                axisLine: {
-                    show: false
-                },
-                axisLabel: {
-                    textStyle: {
-                        color: '#fff'
-                    }
-                }
-            },
-            {
-                show: false,
-                data: dataShadow,
-                axisLabel: {
-                    inside: true,
-                    textStyle: {
-                        color: '#fff'
-                    }
-                },
-                axisTick: {
-                    show: false
-                },
-                axisLine: {
-                    show: false
-                },
-                z: 10
-        },
+            
+        
         ],
-        yAxis: [{
-                show: true,
-                splitLine: {
-                    show: false,
-                    lineStyle: {
-                        color: "#0e94eb"
+        parallel: {                         // 这是『坐标系』的定义
+            left: '10%',                     // 平行坐标系的位置设置
+            right: '13%',
+            bottom: '10%',
+            top: '20%',
+            parallelAxisDefault: {          // 『坐标轴』的公有属性可以配置在这里避免重复书写
+                type: 'value',
+                nameLocation: 'end',
+                nameGap: 20,
+                axisLine :{                   
+                    lineStyle:{
+                        color:'#fff'
                     }
-                },
-                axisTick: {
-                    show: false
-                },
-                axisLine: {
-                    show: false
-                },
-                axisLabel: {
-                    show: true,
-                    color: '#0e94eb'
                 }
-        }, {
-                show: false,
-                type: "value",
-                nameTextStyle: {
-                    color: '#0e94eb'
-                },
-                axisLabel: {
-                    color: '#0e94eb'
-                },
-                splitLine: {
-                    show: false
-                },
-                axisLine: {
-                    show: false
-                },
-                axisTick: {
-                    show: false
-                }
+            }
         },
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 1,
+                    color:'#33CC66'
+                },
+                data: [
+                [0,48.84,4.42,35.2,16.62,37.75],
+                [0,49.43,30.5,70.96,27.33,249.87],
+                [0,1445.08,464.34,885.22,108.1,3825.09],
+                [0.13,974.87,135.38,247.49,5.09,1421.25],
+                [0,190.82,277.32,734.8,10.68,3840.3],
+                [0,856.42,435.41,464.15,482.41,2538.74],
+                [0,164.09,274.65,137.41,24.95,4039.24],
+                [0,184.29,300.42,610.03,71.85,7867.72],
+                [0,32.62,9.14,31.95,22.79,93.96],
+                [1.09,969.13,306.51,295.14,493.81,3746.1],
+                [18.1,722.55,103.56,49.49,599.05,620.9],
+                [13.73,778.1,456.31,224.65,236.5,4087.56],
+                [48.79,810.29,286.54,75.34,853.07,506.42],
+                [7.38,744.64,344.96,70.94,269.51,2192.33],
+                [2.85,3032.59,819.26,743.69,854.42,5500.75],
+                [7.5,2455.34,646.81,658.57,94.32,6544.17],
+                [40.44,1119.38,425.51,206.33,483.21,2764.33],
+                [25.85,1193.64,562.05,123.6,266.11,3074.36],
+                [13.95,1957.79,457.42,60.89,884.52,1279.87],
+                [9.6,3121.13,440.97,40.17,354.81,1386.54],
+                [0.13,525.67,66.87,5.12,164.09,146.03],
+                [5.08,553.18,196.59,50.94,54.53,1092.84],
+                [37.48,1290.9,664.04,237.56,166.49,3582.14],
+                [24.59,653.66,228.23,32.62,26.21,1094.86],
+                [50.21,1142.6,488.06,110.11,65.77,1930.3],
+                [0.01,3.01,27.36,49.56,0.08,106.15],
+                [9.32,2141.13,127.97,168,17.07,1270.43],
+                [0.16,883.77,135.29,88.94,1.42,1231.46],
+                [0,2.96,40.03,36.76,1.83,109.09],
+                [0,262.77,35.33,293.38,16.6,368.44],
+                [0,1659.51,198.73,252.51,17.05,1735.78]
+                ]
+            }
+        };
+        var px_option3 = {
+            parallelAxis: [{
+                dim: 0,
+                name: '房屋施工面积(万平方米)'
+            },
             {
-                axisLine: {
-                    show: false
-                },
-                axisTick: {
-                    show: false
-                },
-                axisLabel: {
-                    textStyle: {
-                        color: '#999'
+                dim: 1,
+                name: '房屋竣工面积(万平方米)'
+            },
+            {
+                dim: 2,
+                name: '施工机械设备年末总功率(万千瓦)',
+                
+
+            },
+            {
+                dim: 3,
+                name: '从业人员(万人),',
+
+            },
+            {
+                dim: 4,
+                name: '企业总收入(亿元)',
+                
+            },
+            {
+                dim: 5,
+                name: '征用土地面积(平方公里)',
+                
+            }
+            
+        
+        ],
+        parallel: {                         // 这是『坐标系』的定义
+            left: '10%',                     // 平行坐标系的位置设置
+            right: '13%',
+            bottom: '10%',
+            top: '20%',
+            parallelAxisDefault: {          // 『坐标轴』的公有属性可以配置在这里避免重复书写
+                type: 'value',
+                nameLocation: 'end',
+                nameGap: 20,
+                axisLine :{                   
+                    lineStyle:{
+                        color:'#fff'
                     }
                 }
-                }],
-        //        color: ['#e54035'],
-        series: series_data
-    }
-    if (chartType === '') {
-        myChart.clear();
-        myCharts.clear();
-        myChart.setOption(option);
-        myCharts.setOption(option);
-    } else if (chartType === 0) {
-        myChart.clear();
-        myChart.setOption(option);
-    } else if (chartType === 1) {
-        myCharts.clear();
-        myCharts.setOption(option);
-    }
-}
+            }
+        },
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 1
+                },
+                data: [
+                [91154.8,13254.5,716,56.26,17507,30],
+                [18022.6,2189.8,658,57.6,5209.82,30],
+                [35548.9,8212.2,848,78.97,5937.38,58],
+                [23317.1,5048,748,90.4,5813.05,4],
+                [7497.5,1320.7,147,15.49,1434.38,30],
+                [18129.7,3459,424,55.96,3987.47,18],
+                [8737.4,3006.1,117,33.72,2139.08,75],
+                [3753.5,786.8,164,19.47,1488.25,27],
+                [54802.9,9232.4,171,74.91,11902.95,24],
+                [273428,74993.3,5137,879.44,33319.03,214],
+                [181956.4,43302.4,1242,538.25,19871.61,132],
+                [53887.4,14006.5,512,196.15,8765.72,225],
+                [87172.3,19182.5,1113,477.65,12569,56],
+                [35525.6,14475.2,462,164.48,7077.34,93],
+                [95011.9,24018.2,1182,270.64,16050.29,142],
+                [67394,18989.1,1281,288.12,11706.84,50],
+                [94015.9,33112.6,1520,232.47,17435.76,77],
+                [76367.9,24029.2,1274,278.63,11254.79,66],
+                [105978.4,24525.6,1658,354.51,21581.21,102],
+                [29484.2,8596.7,207,118.51,4677.43,88],
+                [1700.3,475.8,12,6.4,552.26,9],
+                [37895.2,13931.8,313,205.54,7758.08,94],
+                [72351.8,23250.8,836,364.57,14936.96,193],
+                [17892.1,4035.6,275,71.58,3599.05,20],
+                [18751.1,6648.6,452,120.21,5175.99,38],
+                [425.5,196.4,17,3.84,331.31,6],
+                [36561.7,7164.9,763,129.83,8754.74,32],
+                [12418.8,2341.4,270,46.01,2481.03,29],
+                [935.5,277.1,54,6.01,688.9,1],
+                [1989.7,839.9,44,11.09,750.77,12],
+                [13355.6,3124.5,306,35.7,3138.24,30],
 
-chart3(1, '')
-    //
-    //
-    //
-$('#dateBtn').on('click', function () {
-    if ($('#timeBox').is(":hidden")) {
-        $('#timeBox').show();
-        document.getElementById('timeBox').focus();
+                ]
+            }
+        };
+        var px_option4 = {
+            parallelAxis: [{
+                dim: 0,
+                name: '医疗卫生机构数(个)'
+            },
+            {
+                dim: 1,
+                name: '保险业企业收入(亿元)'
+            },
+            {
+                dim: 2,
+                name: '住宿业企业营业额(亿元)',
+                
 
-    } else {
-        $('#timeBox').hide();
-    }
-})
+            },
+            {
+                dim: 3,
+                name: '餐饮业企业营业额(亿元),',
 
-$('#dateBtns').on('click', function () {
-    if ($('#timeBoxs').is(":hidden")) {
-        $('#timeBoxs').show();
-        document.getElementById('timeBoxs').focus();
+            },
+            {
+                dim: 4,
+                name: '销售业商品销售总额(亿元)',
+                
+            },
+            {
+                dim: 5,
+                name: '邮政业务总量(亿元)',
+                
+            }
+            
+        
+        ],
+        parallel: {                         // 这是『坐标系』的定义
+            left: '10%',                     // 平行坐标系的位置设置
+            right: '13%',
+            bottom: '10%',
+            top: '20%',
+            parallelAxisDefault: {          // 『坐标轴』的公有属性可以配置在这里避免重复书写
+                type: 'value',
+                nameLocation: 'end',
+                nameGap: 20,
+                axisLine :{                   
+                    lineStyle:{
+                        color:'#fff'
+                    }
+                }
+            }
+        },
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 1
+                },
+                data: [
+                [10699,2526.93,332.8,888.7,77272.6,283],
+                [6076,660.47,39.6,152.4,41856,138.75],
+                [88162,997.5,74.7,66.7,14309.1,528.09],
+                [41007,1994.5,53.7,91.3,18731.5,130.79],
+                [24948,645.56,32.9,40.8,6043.6,62.86],
+                [33051,980.03,57,108.1,19190.4,219.96],
+                [25344,691.29,26.1,27.2,3695.9,108.59],
+                [20578,995.47,19.6,13.2,6461.2,133.38],
+                [6308,1970.9,309.1,1131.2,149862.6,1691.92],
+                [36448,4051.1,250.3,735.2,92056.4,972.66],
+                [35120,2484.66,354.5,547.4,107727.5,2231.46],
+                [29554,1379.67,87.8,257.7,14849.7,393.55],
+                [28693,1051.79,252,360.7,54693.3,474.78],
+                [36764,909.6,101.3,105.7,8070.9,210.69],
+                [85715,2816.49,184.7,295.6,59982.6,642.8],
+                [78536,2360.03,138.1,126.4,15440.3,545.24],
+                [36529,1878.11,122.2,323.6,15259.5,366.57],
+                [55677,1508.75,163.2,224.1,8895.9,295.84],
+                [57964,4153.2,526.1,1230.1,124112.3,3021.1],
+                [34112,780.6,93,94.4,13930.4,162.01],
+                [6277,198.3,116.4,19.3,11302.5,30.97],
+                [21361,965.5,97.3,190.9,14750,163.19],
+                [80249,2204.91,212.1,460.3,18573.6,374.18],
+                [29292,496.26,85.3,62.4,6675.8,87.81],
+                [26885,690.2,85.8,80.4,11791.4,125.15],
+                [6907,39.98,10.4,2.5,796.8,5.16],
+                [34971,1052.37,145.9,245.4,18697.6,168.51],
+                [25759,490.32,42.2,42.7,7938.2,49.8],
+                [6408,106.89,9.1,5,2057.3,10.9],
+                [4571,211.14,6.7,5.6,1444.1,22.46],
+                [16970,685.69,41.7,37.4,13166.2,46.18]
+                ]
+            }
+        };
+        //全局变量，现在用哪个模式
+        //var currentOption =test_Option;
 
-    } else {
-        $('#timeBoxs').hide();
-    }
-})
+        if (chart == '工业.csv')px_option = px_option1;
+        else if(chart == '农业.csv')px_option=px_option2;
+        else if(chart == '建筑业.csv')px_option=px_option3;
+        else if(chart == '第三产业.csv')px_option=px_option4;
 
-$('#switchBtn').on('click', 'span', function () {
-    $(this).addClass('active').siblings().removeClass('active');
-    if ($(this).data('datatype') == 'income') {
-        $('#totalProfit').html('123,456.5元');
-    } else if ($(this).data('datatype') == 'expend') {
-        $('#totalProfit').html('32,111.4元');
-    }
-})
-
-$('#tabBtn').on('click', function () {
-    var _this = $(this);
-    if ($('.right-top').children('.chart-box').is(':hidden')) {
-        _this.children('span').html('图表');
-        $('.right-top').children('.chart-box').show().siblings('.data-box').hide();
-
-    } else {
-        _this.children('span').html('表格');
-        $('.right-top').children('.data-box').show().siblings('.chart-box').hide();
-        if (_this.data('state') == 1) {
-            $('.table1').eq(0).show().siblings('table').hide();
-        } else if (_this.data('state') == 2) {
-            $('.table1').eq(1).show().siblings('table').hide();
-        }
-    }
-})
-
-
-$('#tabBtns').on('click', function () {
-    var _this = $(this);
-    if (_this.siblings('.pop-chart').is(':hidden')) {
-        _this.children('span').html('图表');
-        _this.siblings('.pop-chart').show().siblings('.data-box').hide();
-
-    } else {
-        _this.children('span').html('表格');
-        _this.siblings('.data-box').show().siblings('.chart-box').hide();
-        if (_this.data('state') == 1) {
-            $('.table2').eq(0).show().siblings('table').hide();
-        } else if (_this.data('state') == 2) {
-            $('.table2').eq(1).show().siblings('table').hide();
-        }
-    }
-})
-
-
-
-
-//时间选择器
-var startV = '';
-var endV = '';
-laydate.skin('danlan');
-var startTime = {
-    elem: '#startTime',
-    format: 'YYYY-MM-DD',
-    min: '1997-01-01', //设定最小日期为当前日期
-    max: laydate.now(), //最大日期
-    istime: true,
-    istoday: true,
-    fixed: false,
-    choose: function (datas) {
-        startV = datas;
-        endTime.min = datas; //开始日选好后，重置结束日的最小日期
-    }
-};
-var endTime = {
-    elem: '#endTime',
-    format: 'YYYY-MM-DD',
-    min: laydate.now(),
-    max: laydate.now(),
-    istime: true,
-    istoday: true,
-    fixed: false,
-    choose: function (datas) {
-        //        startTime.max = datas; //结束日选好后，重置开始日的最大日期
-        endV = datas;
-    }
-};
-
-laydate(startTime);
-laydate(endTime);
-
-//时间选择器
-var startVs = '';
-var endVs = '';
-laydate.skin('danlan');
-var startTimes = {
-    elem: '#startTimes',
-    format: 'YYYY-MM-DD',
-    min: '1997-01-01', //设定最小日期为当前日期
-    max: '2099-06-16', //最大日期
-    istime: true,
-    istoday: true,
-    fixed: false,
-    choose: function (datas) {
-        startVs = datas;
-        endTimes.min = datas; //开始日选好后，重置结束日的最小日期
-        setQgData($('#barTypes').parent().parent(), 1);
-    }
-};
-var endTimes = {
-    elem: '#endTimes',
-    format: 'YYYY-MM-DD',
-    min: laydate.now(),
-    max: laydate.now(),
-    istime: true,
-    istoday: true,
-    fixed: false,
-    choose: function (datas) {
-        //        startTime.max = datas; //结束日选好后，重置开始日的最大日期
-        endVs = datas;
-        setQgData($('#barTypes').parent().parent(), 1);
-    }
-};
-
-laydate(startTimes);
-laydate(endTimes);
-
-//点击时间选择器的时候更改样式
-$('#endTime').on('click', function () {
-    dateCss();
-})
-
-$('#end').on('click', function () {
-    dateCss();
-})
-
-
-//更改日期插件的样式
-function dateCss() {
-    var arr = $('#laydate_box').attr('style').split(';');
-    var cssStr =
-        'position:absolute;right:0;';
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i].indexOf('top') != -1) {
-            cssStr += arr[i];
-        }
-    }
-
-    $('#laydate_box').attr('style', cssStr);
-}
-
-
-
-//chart4Data模拟数据
-var chart4Data = [{
-    'name': "天津市",
-    'value': 178546
-    }, {
-    'name': "湖南省",
-    'value': 125687
-    }, {
-    'name': "福建省",
-    'value': 78452
-    }, {
-    'name': "北京市",
-    'value': 57841
-    }, {
-    'name': "江苏省",
-    'value': 45879
-    }, {
-    'name': "海南",
-    'value': 28584
-    }, {
-    'name': "四川省",
-    'value': 14852
-    }, {
-    'name': "浙江省",
-    'value': 12589
-    }, {
-    'name': "重庆市",
-    'value': 5261
-    }, {
-    'name': "香港特别行政区",
-    'value': 2563
-    }, {
-    'name': "内蒙古",
-    'value': 856
-    }]
-chart4(chart4Data, 1, '');
-
-function chart4(data, type, chartType) {
-    var str = '<li><span></span><p>城市</p><p>派件</p></li>';
-    for (var i = 0; i < 10; i++) {
-        str += '<li><span>' + (i + 1) + '</span><p>' + data[i].name + '</p><p>' + data[i].value + '</p></li>';
-    }
-
-    var s_data = [];
-    var myChart = echarts.init(document.getElementById('chart4'));
-    var myCharts = echarts.init(document.getElementById('chart4s'));
-    window.addEventListener('resize', function () {
-        myChart.resize();
-        myCharts.resize();
+        var currentOption =px_option;
+        myChart1.setOption(currentOption);
+        
     });
-
-
-    function formtGCData(geoData, data, srcNam, dest) {
-        var tGeoDt = [];
-        if (dest) {
-            for (var i = 0, len = data.length; i < len; i++) {
-                if (srcNam != data[i].name) {
-                    tGeoDt.push({
-                        coords: [geoData[srcNam], geoData[data[i].name]],
-                    });
-                }
-            }
-        } else {
-            for (var i = 0, len = data.length; i < len; i++) {
-                if (srcNam != data[i].name) {
-                    tGeoDt.push({
-                        coords: [geoData[data[i].name], geoData[srcNam]],
-                    });
-                }
-            }
-        }
-        return tGeoDt;
-    }
-
-    function formtVData(geoData, data, srcNam) {
-        var tGeoDt = [];
-        for (var i = 0, len = data.length; i < len; i++) {
-            var tNam = data[i].name
-            if (srcNam != tNam) {
-                tGeoDt.push({
-                    name: tNam,
-                    symbolSize: 2,
-                    itemStyle: {
-                        normal: {
-                            color: '#ffeb40',
-                        }
-                    },
-                    value: geoData[tNam]
-                });
-            }
-
-        }
-        tGeoDt.push({
-            name: srcNam,
-            value: geoData[srcNam],
-            symbolSize: 5,
-            itemStyle: {
-                normal: {
-                    color: '#2ef358',
-                }
-            }
-
-        });
-        return tGeoDt;
-    }
-
-    var planePath = 'pin';
-    if (type == 2) {
-        s_data.push({
-            type: 'lines',
-            zlevel: 2,
-            mapType: 'china',
-            symbol: 'none',
-            effect: {
-                show: true,
-                period: 1.5,
-                trailLength: 0.1,
-                //                color: '#ffeb40',
-                color: '#2ef358',
-                symbol: planePath,
-                symbolSize: 6,
-                trailLength: 0.5
-
-            },
-            lineStyle: {
-                normal: {
-                    color: '#2ef358',
-                    width: 1,
-                    opacity: 0.4,
-                    curveness: 0.2
-                }
-            },
-            data: formtGCData(geoCoordMap, data, '珠海', true)
-        })
-
-    } else if (type == 1) {
-        s_data.push({
-            type: 'lines',
-            zlevel: 2,
-            effect: {
-                show: true,
-                period: 1.5,
-                trailLength: 0.1,
-                //                color: '#2ef358',
-                color: '#ffeb40',
-                symbol: planePath,
-                symbolSize: 6,
-                trailLength: 0.5
-            },
-            lineStyle: {
-                normal: {
-                    color: '#ffeb40',
-                    width: 1,
-                    opacity: 0.4,
-                    curveness: 0.2
-                }
-            },
-            data: formtGCData(geoCoordMap, data, '珠海', false)
-        }, {
-
-            type: 'effectScatter',
-            coordinateSystem: 'geo',
-            zlevel: 2,
-            rippleEffect: {
-                period: 4,
-                scale: 2.5,
-                brushType: 'stroke'
-            },
-            symbol: 'none',
-            symbolSize: 4,
-            itemStyle: {
-                normal: {
-                    color: '#fff'
-                }
-            },
-
-            data: formtVData(geoCoordMap, data, '珠海')
-        })
-    }
-
-    var option = {
-        tooltip: {
-            trigger: 'item',
-        },
-        geo: {
-            map: 'china',
-            label: {
-                show: true,
-                position: 'insideLeft',
-                color: 'white',
-                fontSize: '10',
-                emphasis: {
-                    show: true
-                }
-            },
-            roam: true,
-            silent: true,
-            itemStyle: {
-                normal: {
-                    areaColor: 'transparent',
-                    borderColor: '#0e94eb',
-                    shadowBlur: 10,
-                    shadowColor: '#0e94ea'
-                }
-            },
-            left: 10,
-            right: 10
-        },
-        series: s_data
-    };
-    if (chartType === '') {
-        $('.ranking-box').html(str);
-        myChart.setOption(option);
-        myCharts.setOption(option);
-    } else if (chartType === 0) {
-        $('.center-bottom .ranking-box').html(str);
-        myChart.setOption(option);
-    } else if (chartType === 1) {
-        $('.pop-data .ranking-box').html(str);
-        myCharts.setOption(option);
-    }
-}
-
-$('.close-pop').on('click', function () {
-    $(this).parent().parent().hide().find('.cont-div').attr('style', 'visibility: hidden');
-})
-
-$('#setBtn').on('click', function () {
-    $('.container').attr('style', 'visibility: visible').find('.pop-up').eq(4).attr('style', 'visibility: visible').siblings().attr('style', 'visibility: hidden');
-
-})
-
-var workDate;
-var time = {
-    elem: '#times',
-    format: 'YYYY-MM-DD',
-    min: laydate.now(),
-    max: laydate.now() + 30,
-    istime: true,
-    istoday: true,
-    fixed: false,
-    choose: function (datas) {
-        //        startTime.max = datas; //结束日选好后，重置开始日的最大日期
-        workDate = datas;
-    }
 };
 
-laydate(time);
 
-$('#addT').on('click', function () {
-    $('#mineusT').show();
-    if ($(this).siblings('input').length < 6) {
-        if ($(this).siblings('input').length == 5) {
-            $(this).hide();
+function chart2(dataName)
+    {
+        console.log(dataName)
+        pieData = [];
+        tmp=[];
+        d3.csv(dataName, function (error, dataSet)
+        {
+            if(error)
+                console.log("AAAAAAAAAAAAAAAAAAAAAAA");
+            else
+            
+
+                //定义这个图的格式，主要在这里是为了更改读取的数据集
+                var test_Option = {
+  series: {
+    type: 'sunburst',
+    data: [
+  {
+    // name: '农业\nagriculture',
+    name: '农业',
+    itemStyle: {
+      color: '#187a2f'
+    },
+    children: [
+      {
+        name: '农林产值',
+        itemStyle: {
+          color: '#3aa255'
+        },
+        children: [
+          {
+            name: '农业',
+            value: 70321,
+            itemStyle: {
+              color: '#a2bb2b'
+            }
+          },
+          {
+            name: '林业',
+            value: 34261,
+            itemStyle: {
+              color: '#62aa3c'
+            }
+          }
+        ]
+      },
+      {
+        name: '渔业产值',
+        itemStyle: {
+          color: '#00a295'
+        },
+        children: [
+          {
+            name: '海水',
+            value: 16301,
+            itemStyle: {
+              color: '#23dbab'
+            }
+          },
+          {
+            name: '淡水',
+            value: 11359,
+            itemStyle: {
+              color: '#1eca8c'
+            }
+          }
+        ]
+      },
+      {
+        name: '畜牧业产值',
+        itemStyle: {
+          color: '#4Aa235'
+        },
+        children: [
+          {
+            name: '肉类',
+            value: 13234,
+            itemStyle: {
+              color: '#2eab12'
+            }
+          },
+          {
+            name: '蛋类',
+            value: 9382,
+            itemStyle: {
+              color: '#53aa4c'
+            }
+          },
+          {
+            name: '奶类',
+            value: 10271,
+            itemStyle: {
+              color: '#03a153'
+            }
+          }
+        ]
+      }
+    ]
+  },
+  
+  
+  {
+    // name: '服务业\n service',
+    name: '服务业',
+    itemStyle: {
+      color: '#0aa3b5'
+    },
+    children: [
+      {
+        name: '邮政电信',
+        itemStyle: {
+          color: '#9db2b7'
+        },
+        children: [
+          {
+            name: '邮政',
+            value: 5130,
+            itemStyle: {
+              color: '#8b8c90'
+            }
+          },
+          {
+            name: '电信',
+            value: 26800,
+            itemStyle: {
+              color: '#beb276'
+            }
+          }
+        ]
+      },
+      {
+        name: '交通运输',
+        itemStyle: {
+          color: '#76c0cb'
+        },
+        children: [
+          {
+            name: '交通运输',
+            value: 12230,
+            itemStyle: {
+              color: '#80a89d'
+            }
+          }
+        ]
+      }
+    ]
+  },
+  
+ 
+  {
+    // name: '建筑业\n construction',
+    name: '建筑业',
+    itemStyle: {
+      color: '#a87b64'
+    },
+    children: [
+      {
+        name: '建筑业负债',
+        itemStyle: {
+          color: '#c78869'
+        },
+        children: [
+          {
+            name: '流动负债',
+            value: 9923,
+            itemStyle: {
+              color: '#d4ad12'
+            }
+          },
+          {
+            name: '长期负债',
+            value: 3823,
+            itemStyle: {
+              color: '#9d5433'
+            }
+          }
+        ]
+      },
+      {
+        name: '建筑业增加值',
+        itemStyle: {
+          color: '#c77969'
+        },
+        children: [
+          {
+            name: '利税总额',
+            value: 1393,
+            itemStyle: {
+              color: '#d4ad12'
+            }
+          },
+          {
+            name: '利润总额',
+            value: 1200,
+            itemStyle: {
+              color: '#9d5433'
+            }
+          }
+        ]
+      },
+      {
+        name: '建筑业总产值',
+        itemStyle: {
+          color: '#bb764c'
+        },
+        children: [
+          {
+            name: '建筑工程产值',
+            value: 101790,
+            itemStyle: {
+              color: '#692a19'
+            }
+          },
+          {
+            name: '安装工程产值',
+            value: 7120,
+            itemStyle: {
+              color: '#470604'
+            }
+          },
+          {
+            name: '其他产值',
+            value: 960,
+            itemStyle: {
+              color: '#570504'
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    // name: '工业\nindustry',
+    name: '工业',
+    itemStyle: {
+      color: '#e65832'
+    },
+    children: [
+      {
+        name: '企业资产统计',
+        itemStyle: {
+          color: '#d45a59'
+        },
+        children: [
+          {
+            name: '流动资产',
+            value: 20031,
+            itemStyle: {
+              color: '#310d0f'
+            }
+          },
+          {
+            name: '应收账款净额',
+            value: 3432,
+            itemStyle: {
+              color: '#ae341f'
+            }
+          },
+          {
+            name: '固定资产合计',
+            value: 123392,
+            itemStyle: {
+              color: '#d78823'
+            }
+          },
+        ]
+      },
+      {
+        name: '负债情况',
+        itemStyle: {
+          color: '#f89a80'
         }
-        $(this).before('<input type="text" value="">');
-    }
-
-})
-
-$('#mineusT').on('click', function () {
-    if ($(this).siblings('input').length > 1) {
-        if ($(this).siblings('input').length == 6) {
-            $('#addT').show();
-        } else if ($(this).siblings('input').length == 2) {
-            $(this).hide()
+      ,
+      children:[{
+        name: '应付账款',
+        value: 4150,
+        itemStyle: {
+          color: '#f37674'
         }
-        $(this).siblings('input:last').remove();
-    }
-})
-
-$('#addL').on('click', function () {
-    $('#mineusL').show();
-    if ($(this).siblings('input').length < 3) {
-        if ($(this).siblings('input').length == 2) {
-            $(this).hide();
+      },
+      {
+        name: '流动负债',
+        value: 32134,
+        itemStyle: {
+          color: '#e75b68'
         }
-        $(this).before('<input type="text" value="">');
-    }
-
-})
-
-$('#mineusL').on('click', function () {
-    if ($(this).siblings('input').length > 1) {
-        if ($(this).siblings('input').length == 3) {
-            $('#addL').show();
-        } else if ($(this).siblings('input').length == 2) {
-            $(this).hide()
+        }]
+      }
+    ]
+  }
+],
+    radius: [0, '95%'],
+    sort: undefined,
+    emphasis: {
+      focus: 'ancestor'
+    },
+    levels: [
+      {},
+      {
+        r0: '15%',
+        r: '35%',
+        itemStyle: {
+          borderWidth: 2
+        },
+        label: {
+          rotate: 'tangential'
         }
-        $(this).siblings('input:last').remove();
+      },
+      {
+        r0: '35%',
+        r: '70%',
+        label: {
+          align: 'right'
+        }
+      },
+      {
+        r0: '70%',
+        r: '72%',
+        label: {
+          position: 'outside',
+          padding: 3,
+          silent: false
+        },
+        itemStyle: {
+          borderWidth: 3
+        }
+      }
+    ]
+  }
+};
+
+            //全局变量，现在用哪个模式
+            var currentOption =test_Option;
+            myChart2.setOption(currentOption);
+        });
+    };
+
+chart2(dataName);
+document.getElementById("chart333").innerHTML = '农业产业指数';
+
+function chart31(){
+    $.get('json/农业.json', function (data) {
+        myChart3.hideLoading();
+        var itemStyle = {
+            opacity: 0.8
+        };
+        var sizeFunction = function (x) {
+            var y = Math.sqrt(x / 5e8) + 0.1;
+            return y * 80;
+        };
+        // Schema:
+        var schema = [
+            { name: 'Income', index: 0, text: '人均收入', unit: '人民币' },
+            { name: 'Industrial output value', index: 1, text: '产业产值', unit: ' ' },
+            { name: 'Population', index: 2, text: '总人口', unit: '' },
+            { name: 'Province', index: 3, text: ' 省份', unit: '' }
+        ];
+        option = {
+            baseOption: {
+                timeline: {
+                    axisType: 'category',
+                    orient: 'vertical',
+                    autoPlay: true,
+                    inverse: true,
+                    playInterval: 1000,
+                    left: null,
+                    right: 0,
+                    top: 20,
+                    bottom: 20,
+                    width: 55,
+                    height: null,
+                    symbol: 'none',
+                    checkpointStyle: {
+                        borderWidth: 2
+                    },
+                    controlStyle: {
+                        showNextBtn: false,
+                        showPrevBtn: false
+                    },
+                    data: []
+                },
+                // title: [
+                //     {
+                //         text: data.timeline[0],
+                //         textAlign: 'center',
+                //         left: '63%',
+                //         top: '55%',
+                //         textStyle: {
+                //             fontSize: 100
+                //         }
+                //     },
+                //     {
+                //         text: '各省人均收入与相关产业总产值指数',
+                //         left: 'center',
+                //         top: 10,
+                //         textStyle: {
+                //             fontWeight: 'normal',
+                //             fontSize: 20
+                //         }
+                //     }
+                // ],
+                tooltip: {
+                    padding: 5,
+                    borderWidth: 1,
+                    formatter: function (obj) {
+                        var value = obj.value;
+                        // prettier-ignore
+                        return schema[3].text + '：' + value[3] + '<br>'
+                            + schema[1].text + '：' + value[1] + schema[1].unit + '<br>'
+                            + schema[0].text + '：' + value[0] + schema[0].unit + '<br>'
+                            + schema[2].text + '：' + value[2] + '<br>';
+                    }
+                },
+                grid: {
+                    top: 100,
+                    containLabel: true,
+                    left: 30,
+                    right: '110'
+                },
+                xAxis: {
+                    type: 'log',
+                    name: '人均收入',
+                    max: 100000,
+                    min: 300,
+                    nameGap: 25,
+                    nameLocation: 'middle',
+                    nameTextStyle: {
+                        fontSize: 18
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value} ¥'
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#ffffff'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '农业产值指数',
+                    max: 100,
+                    nameTextStyle: {
+                        fontSize: 18
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value} '
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#ffffff'
+                        }
+                    }
+                },
+                visualMap: [
+                    {
+                        show: false,
+                        dimension: 3,
+                        categories: data.counties,
+                        inRange: {
+                            color: (function () {
+                                // prettier-ignore
+                                var colors = ['#51689b', '#ce5c5c', '#fbc357', '#8fbf8f', '#659d84', '#fb8e6a', '#c77288', '#786090', '#91c4c5', '#6890ba'];
+                                return colors.concat(colors);
+                            })()
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        type: 'scatter',
+                        itemStyle: itemStyle,
+                        data: data.series[0],
+                        symbolSize: function (val) {
+                            return sizeFunction(val[2]);
+                        }
+                    }
+                ],
+                animationDurationUpdate: 1000,
+                animationEasingUpdate: 'quinticInOut'
+            },
+            options: []
+        };
+        for (var n = 0; n < data.timeline.length; n++) {
+            option.baseOption.timeline.data.push(data.timeline[n]);
+            option.options.push({
+                title: {
+                    show: true,
+                    text: data.timeline[n] + ''
+                },
+                series: {
+                    name: data.timeline[n],
+                    type: 'scatter',
+                    itemStyle: itemStyle,
+                    data: data.series[n],
+                    symbolSize: function (val) {
+                        return sizeFunction(val[2]);
+                    }
+                }
+            });
+        }
+        myChart3.setOption(option);
+    });
+}
+
+
+function chart32(){
+    $.get('json/工业.json', function (data) {
+        myChart3.hideLoading();
+        var itemStyle = {
+            opacity: 0.8
+        };
+        var sizeFunction = function (x) {
+            var y = Math.sqrt(x / 5e8) + 0.1;
+            return y * 80;
+        };
+        // Schema:
+        var schema = [
+            { name: 'Income', index: 0, text: '人均收入', unit: '人民币' },
+            { name: 'Industrial output value', index: 1, text: '产业产值', unit: ' ' },
+            { name: 'Population', index: 2, text: '总人口', unit: '' },
+            { name: 'Province', index: 3, text: ' 省份', unit: '' }
+        ];
+        option = {
+            baseOption: {
+                timeline: {
+                    axisType: 'category',
+                    orient: 'vertical',
+                    autoPlay: true,
+                    inverse: true,
+                    playInterval: 1000,
+                    left: null,
+                    right: 0,
+                    top: 20,
+                    bottom: 20,
+                    width: 55,
+                    height: null,
+                    symbol: 'none',
+                    checkpointStyle: {
+                        borderWidth: 2
+                    },
+                    controlStyle: {
+                        showNextBtn: false,
+                        showPrevBtn: false
+                    },
+                    data: []
+                },
+                // title: [
+                //     {
+                //         text: data.timeline[0],
+                //         textAlign: 'center',
+                //         left: '63%',
+                //         top: '55%',
+                //         textStyle: {
+                //             fontSize: 100
+                //         }
+                //     },
+                //     {
+                //         text: '各省人均收入与相关产业总产值指数',
+                //         left: 'center',
+                //         top: 10,
+                //         textStyle: {
+                //             fontWeight: 'normal',
+                //             fontSize: 20
+                //         }
+                //     }
+                // ],
+                tooltip: {
+                    padding: 5,
+                    borderWidth: 1,
+                    formatter: function (obj) {
+                        var value = obj.value;
+                        // prettier-ignore
+                        return schema[3].text + '：' + value[3] + '<br>'
+                            + schema[1].text + '：' + value[1] + schema[1].unit + '<br>'
+                            + schema[0].text + '：' + value[0] + schema[0].unit + '<br>'
+                            + schema[2].text + '：' + value[2] + '<br>';
+                    }
+                },
+                grid: {
+                    top: 100,
+                    containLabel: true,
+                    left: 30,
+                    right: '110'
+                },
+                xAxis: {
+                    type: 'log',
+                    name: '人均收入',
+                    max: 100000,
+                    min: 300,
+                    nameGap: 25,
+                    nameLocation: 'middle',
+                    nameTextStyle: {
+                        fontSize: 18
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value} ¥'
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#ffffff'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '工业产值指数',
+                    max: 100,
+                    nameTextStyle: {
+                        fontSize: 18
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value} '
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#ffffff'
+                        }
+                    }
+                },
+                visualMap: [
+                    {
+                        show: false,
+                        dimension: 3,
+                        categories: data.counties,
+                        inRange: {
+                            color: (function () {
+                                // prettier-ignore
+                                var colors = ['#51689b', '#ce5c5c', '#fbc357', '#8fbf8f', '#659d84', '#fb8e6a', '#c77288', '#786090', '#91c4c5', '#6890ba'];
+                                return colors.concat(colors);
+                            })()
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        type: 'scatter',
+                        itemStyle: itemStyle,
+                        data: data.series[0],
+                        symbolSize: function (val) {
+                            return sizeFunction(val[2]);
+                        }
+                    }
+                ],
+                animationDurationUpdate: 1000,
+                animationEasingUpdate: 'quinticInOut'
+            },
+            options: []
+        };
+        for (var n = 0; n < data.timeline.length; n++) {
+            option.baseOption.timeline.data.push(data.timeline[n]);
+            option.options.push({
+                title: {
+                    show: true,
+                    text: data.timeline[n] + ''
+                },
+                series: {
+                    name: data.timeline[n],
+                    type: 'scatter',
+                    itemStyle: itemStyle,
+                    data: data.series[n],
+                    symbolSize: function (val) {
+                        return sizeFunction(val[2]);
+                    }
+                }
+            });
+        }
+        myChart3.setOption(option);
+    });
+}
+
+function chart33(){
+    $.get('json/建筑业.json', function (data) {
+        myChart3.hideLoading();
+        var itemStyle = {
+            opacity: 0.8
+        };
+        var sizeFunction = function (x) {
+            var y = Math.sqrt(x / 5e8) + 0.1;
+            return y * 80;
+        };
+        // Schema:
+        var schema = [
+            { name: 'Income', index: 0, text: '人均收入', unit: '人民币' },
+            { name: 'Industrial output value', index: 1, text: '产业产值', unit: ' ' },
+            { name: 'Population', index: 2, text: '总人口', unit: '' },
+            { name: 'Province', index: 3, text: ' 省份', unit: '' }
+        ];
+        option = {
+            baseOption: {
+                timeline: {
+                    axisType: 'category',
+                    orient: 'vertical',
+                    autoPlay: true,
+                    inverse: true,
+                    playInterval: 1000,
+                    left: null,
+                    right: 0,
+                    top: 20,
+                    bottom: 20,
+                    width: 55,
+                    height: null,
+                    symbol: 'none',
+                    checkpointStyle: {
+                        borderWidth: 2
+                    },
+                    controlStyle: {
+                        showNextBtn: false,
+                        showPrevBtn: false
+                    },
+                    data: []
+                },
+                // title: [
+                //     {
+                //         text: data.timeline[0],
+                //         textAlign: 'center',
+                //         left: '63%',
+                //         top: '55%',
+                //         textStyle: {
+                //             fontSize: 100
+                //         }
+                //     },
+                //     {
+                //         text: '各省人均收入与相关产业总产值指数',
+                //         left: 'center',
+                //         top: 10,
+                //         textStyle: {
+                //             fontWeight: 'normal',
+                //             fontSize: 20
+                //         }
+                //     }
+                // ],
+                tooltip: {
+                    padding: 5,
+                    borderWidth: 1,
+                    formatter: function (obj) {
+                        var value = obj.value;
+                        // prettier-ignore
+                        return schema[3].text + '：' + value[3] + '<br>'
+                            + schema[1].text + '：' + value[1] + schema[1].unit + '<br>'
+                            + schema[0].text + '：' + value[0] + schema[0].unit + '<br>'
+                            + schema[2].text + '：' + value[2] + '<br>';
+                    }
+                },
+                grid: {
+                    top: 100,
+                    containLabel: true,
+                    left: 30,
+                    right: '110'
+                },
+                xAxis: {
+                    type: 'log',
+                    name: '人均收入',
+                    max: 100000,
+                    min: 300,
+                    nameGap: 25,
+                    nameLocation: 'middle',
+                    nameTextStyle: {
+                        fontSize: 18
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value} ¥'
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#ffffff'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '建筑业产值指数',
+                    max: 10000,
+                    nameTextStyle: {
+                        fontSize: 18
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value} '
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#ffffff'
+                        }
+                    }
+                },
+                visualMap: [
+                    {
+                        show: false,
+                        dimension: 3,
+                        categories: data.counties,
+                        inRange: {
+                            color: (function () {
+                                // prettier-ignore
+                                var colors = ['#51689b', '#ce5c5c', '#fbc357', '#8fbf8f', '#659d84', '#fb8e6a', '#c77288', '#786090', '#91c4c5', '#6890ba'];
+                                return colors.concat(colors);
+                            })()
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        type: 'scatter',
+                        itemStyle: itemStyle,
+                        data: data.series[0],
+                        symbolSize: function (val) {
+                            return sizeFunction(val[2]);
+                        }
+                    }
+                ],
+                animationDurationUpdate: 1000,
+                animationEasingUpdate: 'quinticInOut'
+            },
+            options: []
+        };
+        for (var n = 0; n < data.timeline.length; n++) {
+            option.baseOption.timeline.data.push(data.timeline[n]);
+            option.options.push({
+                title: {
+                    show: true,
+                    text: data.timeline[n] + ''
+                },
+                series: {
+                    name: data.timeline[n],
+                    type: 'scatter',
+                    itemStyle: itemStyle,
+                    data: data.series[n],
+                    symbolSize: function (val) {
+                        return sizeFunction(val[2]);
+                    }
+                }
+            });
+        }
+        myChart3.setOption(option);
+    });
+}
+
+function chart34(){
+    $.get('json/第三产业.json', function (data) {
+        myChart3.hideLoading();
+        var itemStyle = {
+            opacity: 0.8
+        };
+        var sizeFunction = function (x) {
+            var y = Math.sqrt(x / 5e8) + 0.1;
+            return y * 80;
+        };
+        // Schema:
+        var schema = [
+            { name: 'Income', index: 0, text: '人均收入', unit: '人民币' },
+            { name: 'Industrial output value', index: 1, text: '产业产值', unit: ' ' },
+            { name: 'Population', index: 2, text: '总人口', unit: '' },
+            { name: 'Province', index: 3, text: ' 省份', unit: '' }
+        ];
+        option = {
+            baseOption: {
+                timeline: {
+                    axisType: 'category',
+                    orient: 'vertical',
+                    autoPlay: true,
+                    inverse: true,
+                    playInterval: 1000,
+                    left: null,
+                    right: 0,
+                    top: 20,
+                    bottom: 20,
+                    width: 55,
+                    height: null,
+                    symbol: 'none',
+                    checkpointStyle: {
+                        borderWidth: 2
+                    },
+                    controlStyle: {
+                        showNextBtn: false,
+                        showPrevBtn: false
+                    },
+                    data: []
+                },
+                // title: [
+                //     {
+                //         text: data.timeline[0],
+                //         textAlign: 'center',
+                //         left: '63%',
+                //         top: '55%',
+                //         textStyle: {
+                //             fontSize: 100
+                //         }
+                //     },
+                //     {
+                //         text: '各省人均收入与相关产业总产值指数',
+                //         left: 'center',
+                //         top: 10,
+                //         textStyle: {
+                //             fontWeight: 'normal',
+                //             fontSize: 20
+                //         }
+                //     }
+                // ],
+                tooltip: {
+                    padding: 5,
+                    borderWidth: 1,
+                    formatter: function (obj) {
+                        var value = obj.value;
+                        // prettier-ignore
+                        return schema[3].text + '：' + value[3] + '<br>'
+                            + schema[1].text + '：' + value[1] + schema[1].unit + '<br>'
+                            + schema[0].text + '：' + value[0] + schema[0].unit + '<br>'
+                            + schema[2].text + '：' + value[2] + '<br>';
+                    }
+                },
+                grid: {
+                    top: 100,
+                    containLabel: true,
+                    left: 30,
+                    right: '110'
+                },
+                xAxis: {
+                    type: 'log',
+                    name: '人均收入',
+                    max: 100000,
+                    min: 300,
+                    nameGap: 25,
+                    nameLocation: 'middle',
+                    nameTextStyle: {
+                        fontSize: 18
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value} ¥'
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#ffffff'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '第三产业产值指数',
+                    max: 100,
+                    nameTextStyle: {
+                        fontSize: 18
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value} '
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#ffffff'
+                        }
+                    }
+                },
+                visualMap: [
+                    {
+                        show: false,
+                        dimension: 3,
+                        categories: data.counties,
+                        inRange: {
+                            color: (function () {
+                                // prettier-ignore
+                                var colors = ['#51689b', '#ce5c5c', '#fbc357', '#8fbf8f', '#659d84', '#fb8e6a', '#c77288', '#786090', '#91c4c5', '#6890ba'];
+                                return colors.concat(colors);
+                            })()
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        type: 'scatter',
+                        itemStyle: itemStyle,
+                        data: data.series[0],
+                        symbolSize: function (val) {
+                            return sizeFunction(val[2]);
+                        }
+                    }
+                ],
+                animationDurationUpdate: 1000,
+                animationEasingUpdate: 'quinticInOut'
+            },
+            options: []
+        };
+        for (var n = 0; n < data.timeline.length; n++) {
+            option.baseOption.timeline.data.push(data.timeline[n]);
+            option.options.push({
+                title: {
+                    show: true,
+                    text: data.timeline[n] + ''
+                },
+                series: {
+                    name: data.timeline[n],
+                    type: 'scatter',
+                    itemStyle: itemStyle,
+                    data: data.series[n],
+                    symbolSize: function (val) {
+                        return sizeFunction(val[2]);
+                    }
+                }
+            });
+        }
+        myChart3.setOption(option);
+    });
+}
+
+chart1(dataName);
+// map(chart);
+chart31();
+
+// drawMap_bar();
+
+
+
+// readData2(dataName);
+
+
+
+//点击之后，换area全局变量，重新读一次数据画图
+// myChart2.on('click', function (params) {
+    // alert(params.name);
+    // area = params.name;
+    // readData(dataName);readData2(dataName);
+// });
+
+function drawMap_bar(){
+    document.body.style.backgroundColor = backGroundColor;
+    const svg1 = d3.select("#mainSvg1");
+    const svg2 = d3.select("#mainSvg2");
+    drawMap(svg1, svg2);
+}
+
+function drawbar(svg)
+{
+    document.getElementById("chart444").innerHTML = Province_Displaying + current_Industry + "产值明细"
+    // const svg = d3.select("#mainSvg");
+    svg.selectAll("*").remove();    // clear canvas
+    const height = svg.attr("height");
+    const width = svg.attr("width");
+    const margin = {top: 90, bottom: 150, left: 80, right: 0};
+    const innerHeight = height - margin.top - margin.bottom;
+    const innerWidth = width - margin.left - margin.right;
+    const mainGroup = svg.append("g")
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .attr("id", "maingroup");
+    const yScale = d3.scaleLinear();
+    const xScale = d3.scaleBand().padding(0.25);
+
+    Promise.all([
+        d3.json("./js/china.json"),
+        d3.csv("./data/第三产业.csv"),
+        d3.csv("./data/工业.csv"),
+        d3.csv("./data/建筑业.csv"),
+        d3.csv("./data/农业.csv")
+    ]).then(totalDate => {
+        let geoData = totalDate[0];
+        let tertiary = totalDate[1];        // the tertiary industry
+        let industry = totalDate[2];        // industry
+        let architecture = totalDate[3];    // architecture
+        let agriculture = totalDate[4];     // agriculture
+        let data;
+        if(current_Industry === "第三产业") data = tertiary;
+        else if(current_Industry === "工业") data = industry;
+        else if(current_Industry === "建筑业") data = architecture;
+        else if(current_Industry === "农业") data = agriculture;
+        for(let i=0; i<data.length; i++) {
+            for (let key of Object.keys(data[i])) {
+                if (key !== "area")
+                    data[i][key] = +data[i][key]
+            }
+        }
+        for(let i=0; i<data.length; i++)
+        {
+            if(data[i]["area"] === Province_Displaying)
+            {
+                data = data[i];
+                delete data["area"];
+                break;
+            }
+        }
+        yScale.domain([0, d3.max(Object.values(data))]).range([innerHeight, 0]).nice();
+        xScale.domain(Object.keys(data)).range([0, innerWidth]);
+        // tips
+        const tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .html(function (event, d) {return `${d}: ${data[d]}`});
+        svg.call(tip);
+        // Initialize
+        let rects = mainGroup.selectAll("rect").data(Object.keys(data)).join("rect")
+            .attr('width', xScale.bandwidth())
+            .attr('height', 0)
+            .attr('y', innerHeight)
+            .attr('x', d => xScale(d));
+        // Transition
+        rects.transition().duration(d => (innerHeight - yScale(data[d]))).ease(d3.easeLinear)
+            .attr("fill", barFillColor)
+            .attr('width', xScale.bandwidth())
+            .attr('height', d => innerHeight - yScale(data[d]))
+            .attr('y', d => yScale(data[d]))
+            .attr('x', d => xScale(d))
+            .attr('stroke', barStrokeColor)
+            .attr('stroke-width', 1);
+        rects.on('mouseover',function(event, d)
+        {
+            d3.select(this)
+                .attr('opacity', 0.75)
+            tip.show(event, d);
+        }).on('mouseout',function(event, d)
+        {
+            d3.select(this)
+                .attr('opacity', 1)
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1);
+            tip.hide(event, d);
+        })
+        // mainGroup.on("click", drawMap);
+        const xAxisMethod = d3.axisBottom(xScale);
+        const yAxisMethod = d3.axisLeft(yScale);
+        // yAxisMethod.tickSize(-innerWidth)
+        const xAxisGroup = mainGroup.append('g').call(xAxisMethod);
+        const yAxisGroup = mainGroup.append('g').call(yAxisMethod);
+        xAxisGroup.attr('transform', `translate(${0}, ${innerHeight})`).attr("class", "loc").attr("color", "#fff");
+        xAxisGroup.selectAll("text").attr("transform", `rotate(30)`).attr("text-anchor", "start");
+        yAxisGroup.attr("color", "#fff");
+        // xAxisGroup.append('text')
+        //     .attr('class', 'axisTitles')
+        //     .text(`${Province_Displaying}${current_Industry}产值明细`)
+        //     .attr('x', innerWidth/2)
+        //     .attr('y', 60)
+        //     .attr("font-size", "3em")
+        //     .attr("fill", "#ffffff");
+        yAxisGroup.append('text')
+            .attr('class', 'axisTitles')
+            .text("产   值")
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -innerHeight/2+20)
+            .attr('y', -40)
+            .attr("font-size", "3em")
+            .attr("fill", "#ffffff");
+    })
+}
+
+/**
+ * draw map, search on mouse-moving, switch on click
+ * @param: svg: svg to draw maps
+ *         svg2: svg to draw bars
+ * @return: none
+* */
+function drawMap(svg, svg2)
+{
+    // const svg = d3.select("#mainSvg");
+    svg.selectAll("*").remove();
+    Promise.all([
+        d3.json("./js/china.json"),
+        d3.csv("./data/第三产业.csv"),
+        d3.csv("./data/工业.csv"),
+        d3.csv("./data/建筑业.csv"),
+        d3.csv("./data/农业.csv")
+    ]).then(totalDate => {
+        console.log(totalDate);
+        let geoData = totalDate[0];
+        let tertiary = totalDate[1];        // the tertiary industry
+        let industry = totalDate[2];        // industry
+        let architecture = totalDate[3];    // architecture
+        let agriculture = totalDate[4];     // agriculture
+
+        let proj = d3.geoMercator();
+        proj.center([110, 44]).scale(700);
+        let path = d3.geoPath().projection(proj);
+
+
+        /**
+         * get info to show on tip, called by draw_map
+         * @param province
+         * @param arr
+         * @returns {string|*}
+         */
+        function fetchInfo(province, arr)
+        {
+            for(let i=0; i<arr.length; i++)
+            {
+                let res = "";
+                if(arr[i].area === province)
+                {
+                    for(let key of Object.keys(arr[i]))
+                    {
+                        if(key === "area") {
+                            if(arr[i][key].length === 3)
+                                res += `<p style="font-size:17px;"><b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp${arr[i][key]}</b> </p>`;
+                            else if(arr[i][key].length === 4)
+                                res += `<p style="font-size:17px;"><b>&nbsp&nbsp&nbsp&nbsp${arr[i][key]} </b></p>`;
+                            else if(arr[i][key].length === 5)
+                                res += `<p style="font-size:17px;"><b>&nbsp&nbsp&nbsp${arr[i][key]} </b></p>`;
+                            else if(arr[i][key].length === 6)
+                                res += `<p style="font-size:17px;"><b>&nbsp&nbsp${arr[i][key]} </b></p>`;
+                            else if(arr[i][key].length === 7)
+                                res += `<p style="font-size:17px;"><b>&nbsp${arr[i][key]}</b> </p>`;
+                            else if(arr[i][key].length === 8)
+                                res += `<p style="font-size:17px;"><b>${arr[i][key]} </b></p>`;
+                        }
+                        else res += `<p style="font-size:14px;">${key}: ${arr[i][key]}</p>`;
+                    }
+                    return res
+                }
+            }
+            return province;
+        }
+
+        /**
+         * adjust the direction of tip, called by draw_map
+         * @param province: province to be displayed
+         * @returns none
+         */
+        function direction(province)
+        {
+            if(province === "新疆维吾尔自治区") tip.direction("e");
+            else if(province === "内蒙古自治区") tip.direction("e");
+            else if(province === "黑龙江省") tip.direction("w");
+            else if(province === "吉林省") tip.direction("w");
+            else if(province === "辽宁省") tip.direction("w");
+            else if(province === "甘肃省") tip.direction("e");
+            else if(province === "河北省") tip.direction("w");
+            else if(province === "天津市") tip.direction("w");
+            else if(province === "北京市") tip.direction("w");
+            else if(province === "山西省") tip.direction("w");
+            else tip.direction("n");
+        }
+
+        const tip = d3.tip()
+            .attr('class', 'd3-tip')
+            .html(function (event, d)
+            {
+                let province = d.properties.name;
+                direction(province);
+                switch (current_Industry){
+                    case "第三产业": return fetchInfo(province, tertiary);
+                    case "工业": return fetchInfo(province, industry);
+                    case "建筑业": return fetchInfo(province, architecture);
+                    case "农业": return fetchInfo(province, agriculture);
+                }
+            });
+        svg.call(tip);
+
+       let map = svg.selectAll('path').data(geoData.features)   // set the properties of map
+           .join('path')
+           .attr('stroke', mapStrokeColor)
+           .attr('fill', mapFillColor)
+           .attr('d', path)
+           .attr("class", "province")
+           .attr('stroke-width', 1)
+           .attr('id', d => d.properties.name);
+
+       /* register events */
+        map.on('mouseover',function(event, d)
+        {
+            d3.select(this)
+                .attr('opacity', 0.5)
+                .attr("font-size", "1px")
+                .attr('stroke', mapMouseoverStrokeColor)
+                .attr('stroke-width', 1);
+                
+            tip.show(event, d);
+        }).on('click', function(event, d)
+        {
+            Province_Displaying = d.properties.name;
+            /* appointed interface */
+            // alert(d.properties.name);
+            tip.hide(event, d);
+            drawbar(svg2);
+        }).on('mouseout', function(event, d)
+        {
+            d3.select(this)
+                .attr('opacity',1 )
+                .attr('stroke', 'black')
+                .attr('stroke-width', 1);
+            tip.hide(event, d);
+        });
+    });
+}
+
+
+// 时钟
+Date.prototype.format = function (fmt) {
+        var o = {
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds() //秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
     }
-})
+setInterval("document.getElementById('time').innerHTML = (new Date()).format('hh:mm:ss');", 1000);
+
+
+

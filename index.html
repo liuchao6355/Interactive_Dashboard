@@ -7,207 +7,104 @@
     <meta name="renderer" content="webkit">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
 
-    <script type="text/javascript" src="js/rem.js"></script>
-    <link rel="stylesheet" href="css/style.css">
-    <title>中国近20年三大产业发展状况的可视化探究</title>
+    <link rel="stylesheet" type="text/css" href="./css/d3-tip.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="./js/echarts.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <script src="./json/农业.json"></script>
+    <script src="./json/工业.json"></script>
+    <script src="./json/建筑业.json"></script>
+    <script src="./json/第三产业.json"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js"></script>
+    <!-- <script src="./js/d3.js"></script> -->
+    <script src="./js/d3-geo-projection.min.js"></script>
+    <script src="./js/d3-v6-tip.js"></script>
+    <title>三大产业发展状况探究</title>
 </head>
 
-<body style="visibility: hidden;">
+<body>
     <div class="container-flex" tabindex="0" hidefocus="true">
         <div class="box-left">
             <div class="left-top">
                 <div class="current-num">
-                    <div>当前总产值</div>
-                    <p></p>
+                    <div>产业</div>
+                    <p id="industry"></p>
                 </div>
             </div>
+            
             <div class="left-center">
                 <div class="title-box">
-                    <h6>各产业占比--XX年</h6>
+                    <h6 id="chart111">XXXX</h6>
                 </div>
-                <div class="chart-box pie-chart">
-                    <div id="pie"></div>
-                    <div>
-                        <div class="pie-data">
-
-                        </div>
-                    </div>
+                <div class="chart-box">
+                    <div id="echart01" style="width: 100%;height:300px; margin-bottom: 20px"></div>
                 </div>
             </div>
             <div class="left-bottom" class="select">
                 <div class="title-box">
-                    <h6>GDP年度数据(柱状图)</h6>
-                    <!-- <img class="line-img" src="images/line-blue.png" alt=""> -->
-                    <!-- <button id="filBtn"><img src="images/select_icon.png" alt="">筛选</button> -->
+                    <h6 id = 'chart222'>XXXX</h6>
                 </div>
                 <div class="chart-box">
-                    <div class="filter-con" id="filCon" data-type="1">
-                        <div class="select" tabindex="0" hidefocus="true">
-                            <div class="select-div">
-                                派件
-                            </div>
-                            <ul class="select-ul">
-                                <li class="active" data-value="1">派件</li>
-                                <li data-value="2">寄件</li>
-                            </ul>
-                        </div>
-                        <div class="select" tabindex="0" hidefocus="true">
-                            <div class="select-div">
-                                公司
-                            </div>
-                            <ul class="select-ul company">
-                                <li class="active" data-value="">公司</li>
-                                <li data-value="1">顺丰</li>
-                                <li data-value="2">京东</li>
-                                <li data-value="2">EMS</li>
-                            </ul>
-                        </div>
-                        <div class="select" tabindex="0" hidefocus="true">
-                            <div class="select-div">
-                                快件类型
-                            </div>
-                            <ul class="select-ul">
-                                <li class="active" data-value="">快件类型</li>
-                                <li data-value="0">文件</li>
-                                <li data-value="1">物品</li>
-                            </ul>
-                        </div>
-                    </div>
+                    <div id="echart02" style="width: 500px;height:300px;margin-top: 30px;"></div>
+                    
                 </div>
             </div>
         </div>
         <div class="box-center">
             <div class="center-top">
-                <h1>产业发展状况可视化探究</h1>
+                <h1>产业发展状况探究</h1>
             </div>
+
             <div class="center-center">
                 <div class="weather-box">
                     <div class="data">
                         <p class="time" id="time">00:00:00</p>
-                        <p id="date"></p>
                     </div>
                 </div>
                 <img src="images/line_bg.png" alt="">
-                <div class="select-box">
-                    <ul id="barType">
-                        <li class="active" data-value="1">农业</li>
-                        <li data-value="2">工业</li>
-                        <li data-value="3">建筑业</li>
-                        <li data-value="4">第三产业</li>
-                    </ul>
-                </div>
+                <div id="menu" style="width:250px;height:100px;left:450px;top:50px"></div>
             </div>
             <div class="center-bottom">
                 <div class="chart-box">
-                    <div id="chart4" style="width:100%;height:95%;"></div>
-                </div>
-                <div class="city-data">
+                    <svg id="mainSvg1" height="700" width="900"></svg>
+                    <!-- <svg id="mainSvg2" height="300" width="300"></svg> -->
                 </div>
             </div>
-
         </div>
+
+
         <div class="box-right">
             <div class="right-top">
                 <div class="title-box">
-                    <h6 id="barTitle">三大产业年度数据(折线图)</h6>
-                    <img class="line-img" src="images/line-blue.png" alt="">
-                    <!-- <button data-state=1 id="tabBtn"><img src="images/chart_icon.png" alt=""><span>图表</span></button> -->
+                    <h6 id="chart333">XXXX</h6>
                 </div>
-                <!-- <p class="unit">单位：件</p> -->
                 <div class="chart-box">
-                    <div id="chart3" style="width:100%;height:100%;"></div>
+                    <div id="echart03" style="width:100%;height:100%;left:1px;bottom:50px"></div>
+                    <!-- <div id="chart3" style="width:100%;height:100%;"></div> -->
+                    <!-- <div><svg id="mainSvg2" height="300" width="300"></svg></div> -->
                 </div>
             </div>
-            <div class="right-center">
-                <div class="title-box">
-                    <p id="switchBtn"><span class="active" data-dataType="income">待定</span><img class="line-img" src="images/line-blue.png" alt=""><span data-dataType="expend"></span></p>
-                    <!-- <img class="line-img" src="images/line-blue.png" alt=""> -->
-                    <!-- <button id="dateBtn"><img src="images/data_icon.png" alt="">待定</button> -->
-                </div>
-                <div class="data-box">
-                    <!-- <p class="data-number" id="totalProfit">123,456.5元</p> -->
-                    <div class="time-box" id="timeBox">
-                        <div class="time-div">
-                            <input class="time-input" type="text" value="" id="startTime">
-                            <img src="images/selsct_time.png" alt="">
-                        </div>
-                        <div class="time-div end">
-                            <input class="time-input" type="text" value="" id="endTime">
-                            <img src="images/selsct_time.png" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
+
             <div class="right-bottom">
                 <div class="title-box">
-                    <button id="setBtn"><img src="images/settings_icon.png" alt="">设置</button>
+                    <h6 id="chart444">XXXX</h6>
                 </div>
-                <div class="data-box">
-
+                <div class="chart-box">
+                    <div id="echart04" style="width:100%;height:100%;"><svg id="mainSvg2" height="500" width="500"></svg></div>
+                    
+                    <!-- <div id="chart3" style="width:100%;height:100%;"></div> -->
                 </div>
             </div>
         </div>
     </div>
 </body>
-<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-<script type="text/javascript" src="js/layer/layer.min.js"></script>
-<script type="text/javascript" src="js/layer/laydate/laydate.js"></script>
-<script type="text/javascript" src="js/echarts.min.js"></script>
-<script type="text/javascript" src="js/china.js"></script>
-<script type="text/javascript" src="js/data/guangdong.js"></script>
-<script type="text/javascript" src="js/base.js"></script>
-<script type="text/javascript">
-    $('document').ready(function () {
-        $("body").css('visibility', 'visible');
-        var localData = [$('#teacher').val(), $('#start').val() + '/' + $('#end').val(), $('#leader').val()]
-        localStorage.setItem("data", localData);
-        $('#conBtn').on('click', function () {
-            localData = [$('#teacher').val(), $('#start').val() + '/' + $('#end').val(), $('#leader').val()]
-            if (typeof (Storage) !== "undefined") {
-                localStorage.setItem("data", localData);
-                var arr = localStorage.getItem("data").split(',');
-                $('#name_a').html(arr[0]);
-                $('#date_a').html(arr[1]);
-                $('#lea_a').html(arr[2]);
-            }
-        })
-        $('#fangda').on('click', function () {
-            if ($(this).siblings('ul').is(":hidden")) {
-                $(this).addClass('active').siblings('ul').show();
-            } else {
-                $(this).removeClass('active').siblings('ul').hide();
-            }
-        })
-
-        $('.modal-btn>li').on('click', function () {
-            var index = $(this).index();
-            if (index <= 2) {
-                $('.container').attr('style', 'visibility: visible').find('.pop-up').eq(index).attr('style', 'visibility: visible').siblings().attr('style', 'visibility: hidden');
-            } else if (index > 2 && index < 5) {
-                $('.container').attr('style', 'visibility: visible').find('.pop-up').eq(3).attr('style', 'visibility: visible').siblings().attr('style', 'visibility: hidden');
-                if (index != 3) {
-                    $('.pop-data .ranking-box').hide();
-                } else {
-                    $('.pop-data .ranking-box').show();
-                }
-                $('.cont-div').eq(index - 3).attr('style', 'visibility: visible').siblings('.cont-div').attr('style', 'visibility: hidden');
-            } else if (index == 5) {
-                $('.container').attr('style', 'visibility: visible').find('.pop-up').eq(3).attr('style', 'visibility: visible').siblings().attr('style', 'visibility: hidden');
-                $('.pop-data .ranking-box').hide();
-                if ($('#switchBtn').find('.active').data('datatype') == "income") {
-                    $('#titles').html('收入数据');
-                    $('#totalProfits').html('123,456.5元');
-                    $('.cont-div').eq(2).attr('style', 'visibility: visible').siblings('.cont-div').attr('style', 'visibility: hidden');
-                } else if ($('#switchBtn').find('.active').data('datatype') == 'expend') {
-                    $('#titles').html('支出数据');
-                    $('#totalProfits').html('32,111.4元');
-                    $('.cont-div').eq(2).attr('style', 'visibility: visible').siblings('div').attr('style', 'visibility: hidden');
-                }
-            }
-        })
-    })
-</script>
-
-
+<!-- <script type="text/javascript" src="js"></script> -->
+<script type="text/javascript" src="./js/rem.js"></script>
+<script type="text/javascript" src="./js/base.js"></script>
+<script src="./js/d3.js"></script>
+<script src="./js/d3-geo-projection.min.js"></script>
+<script src="./js/d3-v6-tip.js"></script>
+<!-- <script src="./js/graphics.js"></script> -->
 
 </html>
