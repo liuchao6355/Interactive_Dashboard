@@ -201,11 +201,21 @@ function chart1(dataName)
             backgroundColor: '#222',
             borderColor: '#777',
             borderWidth: 1
+          },  visualMap: {
+            show: true,
+            min: 0,
+            max: 150,
+            dimension: 2,
+            inRange: {
+              color: ['#d94e5d', '#eac736', '#50a3ba'].reverse()
+              // colorAlpha: [0, 1]
+            }
           },
             series: {
                 type: 'parallel',
                 lineStyle: {
-                    width: 1
+                    width: 1,
+                    opacity: 0.5
                 },
                 data: [
                 [0,0,258.07,203.36,472.57,0.34,'华北'],
@@ -286,6 +296,15 @@ function chart1(dataName)
             backgroundColor: '#222',
             borderColor: '#777',
             borderWidth: 1
+          },  visualMap: {
+            show: true,
+            min: 0,
+            max: 150,
+            dimension: 2,
+            inRange: {
+              color: ['#d94e5d', '#eac736', '#50a3ba'].reverse()
+              // colorAlpha: [0, 1]
+            }
           },
         parallel: {                         // 这是『坐标系』的定义
             left: '10%',                     // 平行坐标系的位置设置
@@ -307,7 +326,7 @@ function chart1(dataName)
                 type: 'parallel',
                 lineStyle: {
                     width: 1,
-                    color:'#33CC66'
+                    opacity: 0.5,
                 },
                 data: [
                 [0,48.84,4.42,35.2,16.62,37.75,'华北'],
@@ -387,6 +406,15 @@ function chart1(dataName)
             backgroundColor: '#222',
             borderColor: '#777',
             borderWidth: 1
+          },  visualMap: {
+            show: true,
+            min: 0,
+            max: 150,
+            dimension: 2,
+            inRange: {
+              color: ['#d94e5d', '#eac736', '#50a3ba'].reverse()
+              // colorAlpha: [0, 1]
+            }
           },
         parallel: {                         // 这是『坐标系』的定义
             left: '10%',                     // 平行坐标系的位置设置
@@ -407,7 +435,8 @@ function chart1(dataName)
             series: {
                 type: 'parallel',
                 lineStyle: {
-                    width: 1
+                    width: 1,
+                    opacity: 0.5
                 },
                 data: [
                 [91154.8,13254.5,716,56.26,17507,30,'华北'],
@@ -488,6 +517,15 @@ function chart1(dataName)
             backgroundColor: '#222',
             borderColor: '#777',
             borderWidth: 1
+          },  visualMap: {
+            show: true,
+            min: 0,
+            max: 150,
+            dimension: 2,
+            inRange: {
+              color: ['#d94e5d', '#eac736', '#50a3ba'].reverse()
+              // colorAlpha: [0, 1]
+            }
           },
         parallel: {                         // 这是『坐标系』的定义
             left: '10%',                     // 平行坐标系的位置设置
@@ -508,7 +546,7 @@ function chart1(dataName)
             series: {
                 type: 'parallel',
                 lineStyle: {
-                    width: 1
+                    width: 1, opacity: 0.5
                 },
                 data: [
                 [10699,2526.93,332.8,888.7,77272.6,283,'华北'],
@@ -553,8 +591,8 @@ function chart1(dataName)
         else if(chart == '建筑业.csv')px_option=px_option3;
         else if(chart == '第三产业.csv')px_option=px_option4;
 
-        var currentOption1 =px_option;
-        myChart1.setOption(currentOption1);
+        var currentOption =px_option;
+        myChart1.setOption(currentOption);
         
     });
 };
