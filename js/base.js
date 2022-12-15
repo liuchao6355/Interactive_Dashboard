@@ -1761,7 +1761,7 @@ function drawbar(svg)
         // tips
         const tip = d3.tip()
             .attr('class', 'd3-tip')
-            .html(function (event, d) {return `${d}: ${data[d]}`});
+            .html(function (event, d) {return `<p style="font-size:17px;"> ${d}: ${data[d]} </p>`});
         svg.call(tip);
         // Initialize
         let rects = mainGroup.selectAll("rect").data(Object.keys(data)).join("rect")
