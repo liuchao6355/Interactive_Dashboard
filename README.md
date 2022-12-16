@@ -1,6 +1,6 @@
 # Interactivate Dashboard
 
-**Development of China's four major industries in recent 20 years.**
+**Development of China's four major industries in recent 10 years.**
 
 [**Web preview**](https://dddclc.github.io/Interactive_Dashboard/).
 
