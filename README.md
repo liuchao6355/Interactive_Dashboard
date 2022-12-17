@@ -2,7 +2,7 @@
 
 **Development of China's four major industries in recent 10 years.**
 
-[**Web preview**](https://dddclc.github.io/Interactive_Dashboard/).
+[**Web preview**](https://dddclc.github.io/Interactive_Dashboard/).（将页面缩放至75%并刷新网页后样式显示正常）
 
 Requirements
 ----
