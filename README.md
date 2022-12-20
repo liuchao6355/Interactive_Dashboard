@@ -22,3 +22,6 @@ Requirements
 1. Click the industry button to change to a different industry
 
 2. Click the provinces on the map to view the output value of each industry in different provinces
+
+
+Data Source: [国家统计局数据](https://data.stats.gov.cn/easyquery.htm?cn=E0103).
