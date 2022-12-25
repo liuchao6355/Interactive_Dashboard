@@ -1,4 +1,4 @@
-# Interactivate Dashboard
+# Interactivate Dashboard（可视化交互大屏）
 
 **Development of China's four major industries in recent 10 years.**
 
