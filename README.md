@@ -2,7 +2,7 @@
 
 **Development of China's four major industries in recent 10 years.**
 
-[**Web preview**](https://dddclc.github.io/Interactive_Dashboard/).（将页面缩放至75%并刷新网页后样式显示正常）
+[**Web preview**](https://liuchao6355.github.io/Interactive_Dashboard/).（将页面缩放至75%并刷新网页后样式显示正常）
 
 
 # 参考模板：[智慧物流](https://github.com/zhangti0708/bigdata-examples/tree/master/%E6%99%BA%E6%85%A7%E7%89%A9%E6%B5%81/%E6%99%BA%E6%85%A7%E7%89%A9%E6%B5%81)
